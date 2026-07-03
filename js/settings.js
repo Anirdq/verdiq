@@ -1,0 +1,220 @@
+/* ============================================================
+   Trade Journal — Settings
+   Manage instruments, sessions, setups, import/export
+   ============================================================ */
+
+const Settings = (() => {
+
+  async function render(container) {
+    const settings = await Store.getSettings();
+    const trades = await Store.getTrades();
+    const journalEntries = await Store.getJournalEntries();
+    const tradeCount = trades.length;
+    const journalCount = journalEntries.length;
+
+    container.innerHTML = `
+      <div class="page-container page-enter" style="max-width:800px">
+        <div class="page-header">
+          <div class="page-header-left">
+            <h1 class="page-title">Settings</h1>
+            <p class="page-subtitle">Customize your journal and manage data</p>
+          </div>
+        </div>
+
+        <!-- Instruments -->
+        <div class="settings-section">
+          <h3 class="settings-section-title">Instruments</h3>
+          <p class="settings-section-desc">Manage the instruments you trade. These appear in dropdowns when logging trades.</p>
+          <div class="settings-list-manage" id="set-instruments">
+            ${settings.instruments.map(i => `
+              <span class="tag tag-accent tag-removable">
+                ${i} <span class="tag-remove" data-list="instruments" data-val="${i}">&times;</span>
+              </span>
+            `).join('')}
+          </div>
+          <div class="settings-add-row">
+            <input type="text" class="form-input" id="set-add-instrument" placeholder="e.g. GBPUSD">
+            <button class="btn btn-secondary btn-sm" id="set-add-instrument-btn">Add</button>
+          </div>
+        </div>
+
+        <!-- Sessions -->
+        <div class="settings-section">
+          <h3 class="settings-section-title">Sessions</h3>
+          <p class="settings-section-desc">Trading sessions you want to track.</p>
+          <div class="settings-list-manage" id="set-sessions">
+            ${settings.sessions.map(s => `
+              <span class="tag tag-purple tag-removable">
+                ${s} <span class="tag-remove" data-list="sessions" data-val="${s}">&times;</span>
+              </span>
+            `).join('')}
+          </div>
+          <div class="settings-add-row">
+            <input type="text" class="form-input" id="set-add-session" placeholder="e.g. Asian">
+            <button class="btn btn-secondary btn-sm" id="set-add-session-btn">Add</button>
+          </div>
+        </div>
+
+        <!-- Setup Names -->
+        <div class="settings-section">
+          <h3 class="settings-section-title">Setup Names</h3>
+          <p class="settings-section-desc">Your trading setups and strategies.</p>
+          <div class="settings-list-manage" id="set-setups">
+            ${settings.setupNames.map(s => `
+              <span class="tag tag-removable">
+                ${s} <span class="tag-remove" data-list="setupNames" data-val="${s}">&times;</span>
+              </span>
+            `).join('')}
+          </div>
+          <div class="settings-add-row">
+            <input type="text" class="form-input" id="set-add-setup" placeholder="e.g. ICT Silver Bullet">
+            <button class="btn btn-secondary btn-sm" id="set-add-setup-btn">Add</button>
+          </div>
+        </div>
+
+        <!-- Emotions -->
+        <div class="settings-section">
+          <h3 class="settings-section-title">Emotion Labels</h3>
+          <p class="settings-section-desc">Emotions you track before, during, and after trades.</p>
+          <div class="settings-list-manage" id="set-emotions">
+            ${settings.emotions.map(e => `
+              <span class="tag tag-removable">
+                ${e} <span class="tag-remove" data-list="emotions" data-val="${e}">&times;</span>
+              </span>
+            `).join('')}
+          </div>
+          <div class="settings-add-row">
+            <input type="text" class="form-input" id="set-add-emotion" placeholder="e.g. Disciplined">
+            <button class="btn btn-secondary btn-sm" id="set-add-emotion-btn">Add</button>
+          </div>
+        </div>
+
+        <!-- Mistake Tags -->
+        <div class="settings-section">
+          <h3 class="settings-section-title">Mistake Tags</h3>
+          <p class="settings-section-desc">Common mistakes to tag on trades for review.</p>
+          <div class="settings-list-manage" id="set-mistakes">
+            ${settings.mistakeTags.map(m => `
+              <span class="tag tag-warning tag-removable">
+                ${m} <span class="tag-remove" data-list="mistakeTags" data-val="${m}">&times;</span>
+              </span>
+            `).join('')}
+          </div>
+          <div class="settings-add-row">
+            <input type="text" class="form-input" id="set-add-mistake" placeholder="e.g. Scaled Out Too Early">
+            <button class="btn btn-secondary btn-sm" id="set-add-mistake-btn">Add</button>
+          </div>
+        </div>
+
+        <!-- Data Management -->
+        <div class="settings-section">
+          <h3 class="settings-section-title">Data Management</h3>
+          <p class="settings-section-desc">Export, import, or manage your trading data. Currently storing <strong>${tradeCount}</strong> trades and <strong>${journalCount}</strong> journal entries.</p>
+          
+          <div class="flex gap-3 flex-wrap mb-4">
+            <button class="btn btn-secondary" id="set-export">📦 Export Data (Now via Supabase)</button>
+            <button class="btn btn-secondary" id="set-import-json">📥 Import Data (Now via Supabase)</button>
+          </div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="settings-section settings-danger-zone">
+          <h3 class="settings-section-title">⚠️ Danger Zone</h3>
+          <p class="settings-section-desc">These actions are irreversible. Make sure to export a backup first.</p>
+          <div class="flex gap-3">
+            <button class="btn btn-danger" id="set-clear-trades">Delete All Trades</button>
+            <button class="btn btn-danger" id="set-clear-all">Delete Everything & Logout</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    bindEvents(container);
+  }
+
+  function bindEvents(container) {
+    // Remove from lists
+    container.addEventListener('click', async e => {
+      const removeBtn = e.target.closest('.tag-remove');
+      if (removeBtn) {
+        const listName = removeBtn.dataset.list;
+        const val = removeBtn.dataset.val;
+        const s = await Store.getSettings();
+        if (s[listName]) {
+          s[listName] = s[listName].filter(v => v !== val);
+          await Store.updateSettings(s);
+          await render(container);
+        }
+      }
+    });
+
+    // Add to lists
+    const addHandlers = [
+      { input: 'set-add-instrument', btn: 'set-add-instrument-btn', list: 'instruments' },
+      { input: 'set-add-session', btn: 'set-add-session-btn', list: 'sessions' },
+      { input: 'set-add-setup', btn: 'set-add-setup-btn', list: 'setupNames' },
+      { input: 'set-add-emotion', btn: 'set-add-emotion-btn', list: 'emotions' },
+      { input: 'set-add-mistake', btn: 'set-add-mistake-btn', list: 'mistakeTags' },
+    ];
+
+    addHandlers.forEach(({ input, btn, list }) => {
+      const inputEl = container.querySelector('#' + input);
+      const btnEl = container.querySelector('#' + btn);
+
+      const doAdd = async () => {
+        const val = inputEl.value.trim();
+        if (val) {
+          const s = await Store.getSettings();
+          if (s[list] && !s[list].includes(val)) {
+            s[list].push(val);
+            await Store.updateSettings(s);
+            inputEl.value = '';
+            await render(container);
+            App.toast(`Added "${val}"`, 'success');
+          }
+        }
+      };
+
+      btnEl.addEventListener('click', doAdd);
+      inputEl.addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); doAdd(); }
+      });
+    });
+
+    // Export/Import
+    container.querySelector('#set-export').addEventListener('click', () => {
+      Store.exportAll();
+    });
+    container.querySelector('#set-import-json').addEventListener('click', () => {
+      Store.importJSON();
+    });
+
+    // Clear trades
+    container.querySelector('#set-clear-trades').addEventListener('click', async () => {
+      if (confirm('Delete ALL trades? This cannot be undone. Export a backup first!')) {
+        const trades = await Store.getTrades();
+        for (const t of trades) {
+          await Store.deleteTrade(t.id);
+        }
+        App.toast('All trades deleted', 'info');
+        await render(container);
+      }
+    });
+
+    // Clear everything
+    container.querySelector('#set-clear-all').addEventListener('click', async () => {
+      if (confirm('Delete EVERYTHING? All trades, journal entries, and settings will be lost. This cannot be undone!')) {
+        if (confirm('Are you really sure? This is permanent.')) {
+          Store.clearAll();
+          App.toast('All data cleared', 'info');
+          // Reload page to re-trigger auth
+          window.location.reload();
+        }
+      }
+    });
+  }
+
+  function destroy() {}
+
+  return { render, destroy };
+})();
