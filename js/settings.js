@@ -137,6 +137,8 @@ const Settings = (() => {
               <span class="btn-icon">📥</span> Import Trades (CSV)
             </button>
             <input type="file" id="csv-file-input" accept=".csv" class="hidden">
+            <button class="btn btn-secondary" id="set-export">📦 Export Data (JSON)</button>
+            <button class="btn btn-secondary" id="set-import-json">📥 Import Data (JSON)</button>
           </div>
           <p class="settings-section-desc" style="margin-top: -10px;">Supports Tradovate and MetaTrader CSV exports.</p>
         </div>
