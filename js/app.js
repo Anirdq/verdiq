@@ -27,8 +27,8 @@ const App = (() => {
   // ==========================================
   // HARDCODE YOUR SUPABASE CREDENTIALS HERE
   // ==========================================
-  const SUPABASE_URL = '';
-  const SUPABASE_KEY = '';
+  const SUPABASE_URL = 'https://cphfylbrlkqywfelrvgm.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNwaGZ5bGJybGtxeXdmZWxydmdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMwNzI0MzksImV4cCI6MjA5ODY0ODQzOX0.u_nlNhmTVQpuVExasu03SDsPi8S_di3f-YodbolV65M';
   // ==========================================
 
   // ---- Auth & Supabase system ----
