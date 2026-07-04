@@ -30,9 +30,11 @@ const App = (() => {
     initTheme();
     initAuth();
     
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js').catch(err => {
-        console.warn('Service Worker registration failed:', err);
+    // Completely removed Service Worker registration to prevent caching issues.
+    // The unregister code at the top of the file will ensure it is deleted.
+    if ('caches' in window) {
+      caches.keys().then(names => {
+        for (let name of names) caches.delete(name);
       });
     }
   }
