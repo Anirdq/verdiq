@@ -191,6 +191,10 @@ const Store = (() => {
         }
 
         if (item.action === 'insert' || item.action === 'update') {
+          if (item.table === 'trades' && window.DEBUG_ALERT_ONCE !== true) {
+             window.DEBUG_ALERT_ONCE = true;
+             alert("Sending to Supabase: " + JSON.stringify(item.data));
+          }
           console.error("DEBUG Upsert Payload:", JSON.stringify(item.data));
           const { error } = await sb.from(item.table).upsert(item.data, { onConflict: item.table === 'user_settings' ? 'user_id' : 'id' });
           if (!error) success = true;
