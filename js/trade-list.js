@@ -143,15 +143,15 @@ const TradeList = (() => {
       const pnl = parseFloat(t.resultMoney) || 0;
       const rowClass = pnl > 10 ? 'row-win' : pnl < -10 ? 'row-loss' : '';
       const isExpanded = expandedId === t.id;
-      const mistakeHtml = (t.mistakeTags || []).slice(0, 2).map(m => `<span class="tag tag-warning" style="font-size:0.625rem">${m}</span>`).join(' ');
+      const mistakeHtml = (t.mistakeTags || []).slice(0, 2).map(m => `<span class="tag tag-warning" style="font-size:0.625rem">${Utils.escapeHTML(m)}</span>`).join(' ');
 
       html += `<tr class="${rowClass}" data-id="${t.id}" style="cursor:pointer">
         <td class="cell-mono">${Utils.formatDate(t.date, 'short')}</td>
-        <td>${t.session || '—'}</td>
-        <td><span class="tag tag-accent">${t.instrument}</span></td>
+        <td>${Utils.escapeHTML(t.session || '—')}</td>
+        <td><span class="tag tag-accent">${Utils.escapeHTML(t.instrument)}</span></td>
         <td><span class="tag ${t.direction === 'Long' ? 'tag-profit' : 'tag-loss'}">${t.direction === 'Long' ? '▲' : '▼'} ${t.direction}</span></td>
-        <td class="truncate" style="max-width:150px">${t.setupName || '—'}</td>
-        <td class="cell-mono">${t.entryPrice || '—'}</td>
+        <td class="truncate" style="max-width:150px">${Utils.escapeHTML(t.setupName || '—')}</td>
+        <td class="cell-mono">${Utils.escapeHTML(t.entryPrice || '—')}</td>
         <td class="cell-mono">${t.exitPrice || '—'}</td>
         <td class="cell-pnl ${Utils.pnlClass(pnl)}">${Utils.formatCurrency(pnl)}</td>
         <td class="cell-pnl ${Utils.pnlClass(t.resultR)}">${Utils.formatR(parseFloat(t.resultR) || 0)}</td>
@@ -217,11 +217,11 @@ const TradeList = (() => {
   function renderExpanded(t) {
     const details = [
       { label: 'Date', value: Utils.formatDate(t.date, 'long') },
-      { label: 'Session', value: t.session || '—' },
-      { label: 'Instrument', value: t.instrument },
-      { label: 'Direction', value: t.direction },
-      { label: 'Timeframe', value: t.timeframe || '—' },
-      { label: 'Setup', value: t.setupName || '—' },
+      { label: 'Session', value: Utils.escapeHTML(t.session || '—') },
+      { label: 'Instrument', value: Utils.escapeHTML(t.instrument || '—') },
+      { label: 'Direction', value: Utils.escapeHTML(t.direction || '—') },
+      { label: 'Timeframe', value: Utils.escapeHTML(t.timeframe || '—') },
+      { label: 'Setup', value: Utils.escapeHTML(t.setupName || '—') },
       { label: 'Entry', value: t.entryPrice },
       { label: 'Stop', value: t.stopPrice },
       { label: 'Target', value: t.targetPrice },
@@ -233,9 +233,9 @@ const TradeList = (() => {
       { label: 'Result ($)', value: Utils.formatCurrency(t.resultMoney) },
       { label: 'Result (R)', value: Utils.formatR(parseFloat(t.resultR) || 0) },
       { label: 'Rule Followed', value: t.ruleFollowed ? '✓ Yes' : '✗ No' },
-      { label: 'Emotion Before', value: t.emotionBefore || '—' },
-      { label: 'Emotion During', value: t.emotionDuring || '—' },
-      { label: 'Emotion After', value: t.emotionAfter || '—' },
+      { label: 'Emotion Before', value: Utils.escapeHTML(t.emotionBefore || '—') },
+      { label: 'Emotion During', value: Utils.escapeHTML(t.emotionDuring || '—') },
+      { label: 'Emotion After', value: Utils.escapeHTML(t.emotionAfter || '—') },
     ];
 
     let html = `<div class="trade-expanded animate-fade-in">

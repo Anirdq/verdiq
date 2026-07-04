@@ -220,11 +220,11 @@ const Calendar = (() => {
       trades.forEach(t => {
         const pnl = parseFloat(t.resultMoney) || 0;
         html += `<tr class="${pnl > 0 ? 'row-win' : pnl < 0 ? 'row-loss' : ''}" style="cursor:pointer" onclick="window.location.hash='#/edit-trade/${t.id}'">
-          <td><span class="tag tag-accent">${t.instrument}</span></td>
+          <td><span class="tag tag-accent">${Utils.escapeHTML(t.instrument || '—')}</span></td>
           <td><span class="tag ${t.direction === 'Long' ? 'tag-profit' : 'tag-loss'}">${t.direction}</span></td>
-          <td>${t.setupName || '—'}</td>
-          <td class="cell-mono">${t.entryPrice}</td>
-          <td class="cell-mono">${t.exitPrice || '—'}</td>
+          <td>${Utils.escapeHTML(t.setupName || '—')}</td>
+          <td class="cell-mono">${Utils.escapeHTML(t.entryPrice || '—')}</td>
+          <td class="cell-mono">${Utils.escapeHTML(t.exitPrice || '—')}</td>
           <td class="cell-pnl ${Utils.pnlClass(pnl)}">${Utils.formatCurrency(pnl)}</td>
           <td class="cell-pnl ${Utils.pnlClass(t.resultR)}">${Utils.formatR(parseFloat(t.resultR) || 0)}</td>
         </tr>`;

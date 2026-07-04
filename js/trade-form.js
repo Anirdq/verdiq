@@ -100,7 +100,7 @@ const TradeForm = (() => {
                 <label class="form-label">Instrument</label>
                 <select class="form-select" id="tf-instrument" required>
                   <option value="">Select...</option>
-                  ${settings.instruments.map(i => `<option value="${i}" ${t.instrument === i ? 'selected' : ''}>${i}</option>`).join('')}
+                  ${settings.instruments.map(i => `<option value="${Utils.escapeHTML(i)}" ${t.instrument === i ? 'selected' : ''}>${Utils.escapeHTML(i)}</option>`).join('')}
                 </select>
               </div>
               <div class="form-group">
@@ -117,14 +117,14 @@ const TradeForm = (() => {
                 <label class="form-label">Timeframe</label>
                 <select class="form-select" id="tf-timeframe">
                   <option value="">Select...</option>
-                  ${settings.timeframes.map(tf => `<option value="${tf}" ${t.timeframe === tf ? 'selected' : ''}>${tf}</option>`).join('')}
+                  ${settings.timeframes.map(tf => `<option value="${Utils.escapeHTML(tf)}" ${t.timeframe === tf ? 'selected' : ''}>${Utils.escapeHTML(tf)}</option>`).join('')}
                 </select>
               </div>
               <div class="form-group" style="grid-column: span 2">
                 <label class="form-label">Setup Name</label>
                 <select class="form-select" id="tf-setup">
                   <option value="">Select setup...</option>
-                  ${settings.setupNames.map(s => `<option value="${s}" ${t.setupName === s ? 'selected' : ''}>${s}</option>`).join('')}
+                  ${settings.setupNames.map(s => `<option value="${Utils.escapeHTML(s)}" ${t.setupName === s ? 'selected' : ''}>${Utils.escapeHTML(s)}</option>`).join('')}
                 </select>
               </div>
             </div>

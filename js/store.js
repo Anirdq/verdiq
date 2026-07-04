@@ -163,7 +163,6 @@ const Store = (() => {
         }
 
         if (item.action === 'insert' || item.action === 'update') {
-          console.error("DEBUG Upsert Payload:", JSON.stringify(item.data));
           const { error } = await sb.from(item.table).upsert(item.data, { onConflict: item.table === 'user_settings' ? 'user_id' : 'id' });
           if (!error) success = true;
           else console.error('Sync error:', error);
@@ -353,7 +352,6 @@ const Store = (() => {
       // Fetch Trades
       const { data: t } = await window.supabaseClient.from('trades').select('*');
       if (t) {
-        if (t.length > 0) console.error("DEBUG Cloud Trade [0]:", JSON.stringify(t[0]));
         const localTrades = await idbGet('trades');
         const pendingQueue = await idbGet('sync_queue');
         const pendingIds = new Set(pendingQueue.filter(i => i.table === 'trades').map(i => i.data.id));

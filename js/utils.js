@@ -85,7 +85,7 @@ const Utils = (() => {
 
   function formatCurrency(val, decimals = 2) {
     if (val == null || isNaN(val)) return '$0.00';
-    const sign = val >= 0 ? '+' : '';
+    const sign = val >= 0 ? '+' : '-';
     return sign + '$' + Math.abs(val).toLocaleString('en-US', {
       minimumFractionDigits: decimals,
       maximumFractionDigits: decimals,

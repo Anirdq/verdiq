@@ -13,7 +13,6 @@ const ImportCSV = (() => {
           complete: async function(results) {
             try {
               const rows = results.data;
-              console.error("DEBUG Parsed CSV Rows:", JSON.stringify(rows[0])); // Debugging
               let importCount = 0;
 
           for (const row of rows) {
@@ -93,10 +92,6 @@ const ImportCSV = (() => {
               ruleFollowed: true,
               mistakeTags: [],
             };
-
-            if (importCount === 0) {
-              console.error("DEBUG Pre-Save Trade [0]:", JSON.stringify(trade));
-            }
 
             await Store.addTrade(trade);
             importCount++;
