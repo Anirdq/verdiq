@@ -25,7 +25,7 @@ const Settings = (() => {
         <div class="settings-section">
           <h3 class="settings-section-title">Account & Risk Defaults</h3>
           <p class="settings-section-desc">Set your account balance and default risk for the position calculator.</p>
-          <div class="form-row form-row-2 mb-3">
+          <div class="form-row form-row-3 mb-3">
             <div class="form-group">
               <label class="form-label">Account Balance ($)</label>
               <div style="display:flex;gap:10px">
@@ -39,6 +39,14 @@ const Settings = (() => {
                 <input type="number" inputmode="decimal" step="any" class="form-input" id="set-default-risk" value="${settings.defaultRisk || 1}">
                 <button class="btn btn-secondary btn-sm" id="set-save-risk">Save</button>
               </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Default Fee ($)</label>
+              <div style="display:flex;gap:10px">
+                <input type="number" inputmode="decimal" step="any" class="form-input" id="set-default-fee" value="${settings.defaultFee || 0}">
+                <button class="btn btn-secondary btn-sm" id="set-save-fee">Save</button>
+              </div>
+              <button class="btn btn-secondary btn-sm mt-2" id="set-bulk-apply-fee" style="width:100%; font-size:11px;">Apply to Past Trades</button>
             </div>
           </div>
         </div>
@@ -236,6 +244,40 @@ const Settings = (() => {
     };
     container.querySelector('#set-save-risk').addEventListener('click', saveRisk);
     container.querySelector('#set-default-risk').addEventListener('blur', saveRisk);
+
+    // Save Default Fee
+    const saveFee = async () => {
+      const val = parseFloat(container.querySelector('#set-default-fee').value);
+      if (!isNaN(val)) {
+        const s = await Store.getSettings();
+        if (s.defaultFee !== val) {
+          s.defaultFee = val;
+          await Store.updateSettings(s);
+          App.toast('Default fee updated', 'success');
+        }
+      }
+    };
+    container.querySelector('#set-save-fee').addEventListener('click', saveFee);
+    container.querySelector('#set-default-fee').addEventListener('blur', saveFee);
+
+    // Bulk Apply Fee
+    container.querySelector('#set-bulk-apply-fee').addEventListener('click', async () => {
+      const s = await Store.getSettings();
+      const fee = s.defaultFee || 0;
+      if (confirm(`Apply $${fee} commission fee to ALL past trades?`)) {
+        const trades = await Store.getTrades();
+        let updated = 0;
+        for (const t of trades) {
+          t.fees = fee;
+          await Store.saveTrade(t);
+          updated++;
+        }
+        if (updated > 0) {
+          App.toast(`Applied $${fee} fee to ${updated} trades`, 'success');
+          await render(container);
+        }
+      }
+    });
 
     // Export/Import
     container.querySelector('#set-export').addEventListener('click', () => {

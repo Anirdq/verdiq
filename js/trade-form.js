@@ -29,7 +29,7 @@ const TradeForm = (() => {
       plannedRR: '',
       resultMoney: '',
       resultR: '',
-      fees: '',
+      fees: settings.defaultFee || '',
       screenshotBefore: '',
       screenshotAfter: '',
       ruleFollowed: true,
