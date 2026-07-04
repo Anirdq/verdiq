@@ -17,9 +17,9 @@
   <!-- Styles -->
   <link rel="icon" type="image/png" href="/icon.png">
   <link rel="apple-touch-icon" href="/icon.png">
-  <link rel="stylesheet" href="css/index.css">
-  <link rel="stylesheet" href="css/components.css">
-  <link rel="stylesheet" href="css/pages.css">
+  <link rel="stylesheet" href="css/index.css?v=16">
+  <link rel="stylesheet" href="css/components.css?v=16">
+  <link rel="stylesheet" href="css/pages.css?v=16">
 
 </head>
 <body>
@@ -30,6 +30,17 @@
       <img src="/icon.png" alt="Verdiq" style="width: 64px; height: 64px; border-radius: 12px; margin-bottom: 8px;">
       <div style="color:var(--text-muted);font-size:14px;font-family:var(--font-body)">Loading Verdiq...</div>
     </div>
+
+    <!-- Mobile Top Navigation / Branding -->
+    <header class="mobile-top-bar" id="mobile-top-bar">
+      <div class="mobile-logo">
+        <img src="/icon.png" alt="Verdiq">
+        <span>Verdiq</span>
+      </div>
+      <div class="mobile-profile" onclick="document.querySelector('[data-route=\\'/settings\\']').click()">
+        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+      </div>
+    </header>
 
     <!-- Main Content Area -->
     <main class="main-content" id="main-content">
