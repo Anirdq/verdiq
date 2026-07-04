@@ -36,24 +36,41 @@ const ImportCSV = (() => {
             // Tradovate often has 'symbol', 'timestamp', 'price', 'p&l', etc.
             // MetaTrader has 'time', 'deal', 'symbol', 'type', 'direction', 'price', 'profit'
             
-            const dateStr = row['timestamp'] || row['time'] || row['date'] || row['close time'];
+            const dateStr = row['timestamp'] || row['time'] || row['date'] || row['close time'] || row['boughttimestamp'] || row['soldtimestamp'];
             if (!dateStr) continue; // skip invalid rows
 
             const instrument = row['symbol'] || row['item'] || row['contract'] || 'UNKNOWN';
             
             // Try to figure out PnL
             let pnlStr = row['p&l'] || row['profit'] || row['net pnl'] || row['pnl'] || '0';
-            pnlStr = pnlStr.replace(/[^0-9.-]+/g, "");
+            pnlStr = String(pnlStr).replace(/[^0-9.-]+/g, "");
             const pnl = parseFloat(pnlStr) || 0;
 
             // Direction
             let dir = 'Long';
             const typeStr = (row['type'] || row['direction'] || row['buy/sell'] || row['side'] || '').toLowerCase();
             if (typeStr.includes('sell') || typeStr.includes('short')) dir = 'Short';
+            
+            // Tradovate specific direction inference
+            if (!typeStr && row['boughttimestamp'] && row['soldtimestamp']) {
+              const bTime = new Date(row['boughttimestamp']).getTime();
+              const sTime = new Date(row['soldtimestamp']).getTime();
+              if (sTime < bTime) dir = 'Short';
+            }
 
             // Prices
-            const entry = parseFloat(row['entry price'] || row['price'] || row['open price']) || 0;
-            const exit = parseFloat(row['exit price'] || row['close price']) || 0;
+            let entry = parseFloat(row['entry price'] || row['price'] || row['open price']) || 0;
+            let exit = parseFloat(row['exit price'] || row['close price']) || 0;
+
+            if (row['buyprice'] && row['sellprice']) {
+              if (dir === 'Long') {
+                entry = parseFloat(row['buyprice']) || 0;
+                exit = parseFloat(row['sellprice']) || 0;
+              } else {
+                entry = parseFloat(row['sellprice']) || 0;
+                exit = parseFloat(row['buyprice']) || 0;
+              }
+            }
             const qty = parseFloat(row['qty'] || row['quantity'] || row['volume']) || 1;
 
             const trade = {
