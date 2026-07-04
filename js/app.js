@@ -4,6 +4,14 @@
    ============================================================ */
 
 const App = (() => {
+  // ---- Unregister Service Workers to forcefully flush cache ----
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+      for(let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
 
   let currentPage = null;
 
@@ -265,6 +273,16 @@ const App = (() => {
       <div class="mobile-overlay" id="mobile-overlay"></div>
 
       <button class="mobile-nav-toggle" id="mobile-toggle">☰</button>
+
+      <header class="mobile-top-bar" id="mobile-top-bar">
+        <div class="mobile-logo">
+          <img src="/icon.png" alt="Verdiq">
+          <span>Verdiq</span>
+        </div>
+        <div class="mobile-profile" onclick="document.querySelector('[data-route=\\'/settings\\']').click()">
+          <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        </div>
+      </header>
 
       <main class="main-content" id="main-content"></main>
 
