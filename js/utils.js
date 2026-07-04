@@ -190,7 +190,6 @@ const Utils = (() => {
 
     // Sort by date for streak calc
     const sorted = [...trades].sort((a, b) => new Date(a.date) - new Date(b.date));
-    const BREAKEVEN_THRESHOLD = 10.00;
     for (const t of sorted) {
       const pnl = parseFloat(t.resultMoney) || 0;
       if (pnl > BREAKEVEN_THRESHOLD) {
