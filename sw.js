@@ -1,4 +1,4 @@
-const CACHE_NAME = 'verdiq-cache-v3';
+const CACHE_NAME = 'verdiq-cache-v4';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -8,6 +8,7 @@ const urlsToCache = [
   '/js/app.js',
   '/js/store.js',
   '/js/utils.js',
+  '/js/csv_import.js',
   '/manifest.json',
   '/icon.png'
 ];
