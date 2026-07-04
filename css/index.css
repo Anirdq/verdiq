@@ -394,7 +394,7 @@ table { border-collapse: collapse; width: 100%; }
   border-right: 1px solid var(--border-primary);
   display: flex;
   flex-direction: column;
-  z-index: 100;
+  z-index: 250;
   transition: transform var(--transition-slow);
   overflow-y: auto;
   overflow-x: hidden;
@@ -573,9 +573,9 @@ table { border-collapse: collapse; width: 100%; }
 .mobile-nav-toggle {
   display: none;
   position: fixed;
-  bottom: var(--space-5);
+  bottom: calc(60px + env(safe-area-inset-bottom) + var(--space-5));
   right: var(--space-5);
-  z-index: 200;
+  z-index: 260;
   width: 52px; height: 52px;
   border-radius: var(--radius-full);
   background: linear-gradient(135deg, var(--color-accent), var(--color-purple));
@@ -595,7 +595,7 @@ table { border-collapse: collapse; width: 100%; }
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.65);
-  z-index: 99;
+  z-index: 240;
   backdrop-filter: blur(4px);
 }
 
