@@ -20,7 +20,7 @@ const Store = (() => {
   }
 
   // ---- IndexedDB Wrapper ----
-  const DB_NAME = 'tj_database';
+  const DB_NAME = 'tj_database_v2';
   const DB_VERSION = 1;
   let dbPromise = null;
 
