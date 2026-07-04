@@ -899,5 +899,5 @@ table { border-collapse: collapse; width: 100%; }
   }
 }
 
-[data-theme="light"] .sidebar-logo img, [data-theme="light"] .auth-logo img, [data-theme="light"] .app > div > img { filter: invert(1) hue-rotate(180deg); }
+[data-theme="light"] .sidebar-logo img, [data-theme="light"] .auth-logo img, [data-theme="light"] .app > div > img, [data-theme="light"] .mobile-logo img { filter: invert(1) hue-rotate(180deg); }
 
