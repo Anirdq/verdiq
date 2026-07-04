@@ -13,6 +13,7 @@ const App = (() => {
     '/trades': { module: () => TradeList, title: 'Trade Log' },
     '/calendar': { module: () => Calendar, title: 'Calendar' },
     '/journal': { module: () => Journal, title: 'Journal' },
+    '/calculator': { module: () => Calculator, title: 'Position Calculator' },
     '/settings': { module: () => Settings, title: 'Settings' },
   };
 
@@ -221,6 +222,12 @@ const App = (() => {
           <a class="nav-item" data-route="/journal" href="#/journal">
             <span class="nav-item-icon"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
             <span>Journal</span>
+          </a>
+
+          <div class="nav-section-label">Tools</div>
+          <a class="nav-item" data-route="/calculator" href="#/calculator">
+            <span class="nav-item-icon"><svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="16" y1="14" x2="16.01" y2="14"/><line x1="12" y1="14" x2="12.01" y2="14"/><line x1="8" y1="14" x2="8.01" y2="14"/><line x1="16" y1="10" x2="16.01" y2="10"/><line x1="12" y1="10" x2="12.01" y2="10"/><line x1="8" y1="10" x2="8.01" y2="10"/><line x1="16" y1="18" x2="16.01" y2="18"/><line x1="12" y1="18" x2="12.01" y2="18"/><line x1="8" y1="18" x2="8.01" y2="18"/></svg></span>
+            <span>Calculator</span>
           </a>
         </div>
 

@@ -21,6 +21,28 @@ const Settings = (() => {
           </div>
         </div>
 
+        <!-- Account & Risk Defaults -->
+        <div class="settings-section">
+          <h3 class="settings-section-title">Account & Risk Defaults</h3>
+          <p class="settings-section-desc">Set your account balance and default risk for the position calculator.</p>
+          <div class="form-row form-row-2 mb-3">
+            <div class="form-group">
+              <label class="form-label">Account Balance ($)</label>
+              <div style="display:flex;gap:10px">
+                <input type="number" step="any" class="form-input" id="set-account-balance" value="${settings.accountBalance || 10000}">
+                <button class="btn btn-secondary btn-sm" id="set-save-balance">Save</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Default Risk (%)</label>
+              <div style="display:flex;gap:10px">
+                <input type="number" step="any" class="form-input" id="set-default-risk" value="${settings.defaultRisk || 1}">
+                <button class="btn btn-secondary btn-sm" id="set-save-risk">Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Instruments -->
         <div class="settings-section">
           <h3 class="settings-section-title">Instruments</h3>
@@ -179,6 +201,28 @@ const Settings = (() => {
       inputEl.addEventListener('keydown', e => {
         if (e.key === 'Enter') { e.preventDefault(); doAdd(); }
       });
+    });
+
+    // Save Account Balance
+    container.querySelector('#set-save-balance').addEventListener('click', async () => {
+      const val = parseFloat(container.querySelector('#set-account-balance').value);
+      if (!isNaN(val)) {
+        const s = await Store.getSettings();
+        s.accountBalance = val;
+        await Store.updateSettings(s);
+        App.toast('Account balance updated', 'success');
+      }
+    });
+
+    // Save Default Risk
+    container.querySelector('#set-save-risk').addEventListener('click', async () => {
+      const val = parseFloat(container.querySelector('#set-default-risk').value);
+      if (!isNaN(val)) {
+        const s = await Store.getSettings();
+        s.defaultRisk = val;
+        await Store.updateSettings(s);
+        App.toast('Default risk updated', 'success');
+      }
     });
 
     // Export/Import

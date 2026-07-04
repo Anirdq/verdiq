@@ -142,9 +142,14 @@ const Store = (() => {
           item.data.user_id = session.user.id;
           item.data.setup_names = item.data.setupNames;
           item.data.mistake_tags = item.data.mistakeTags;
+          item.data.account_balance = item.data.accountBalance;
+          item.data.default_risk = item.data.defaultRisk;
+          
           delete item.data.id;
           delete item.data.setupNames;
           delete item.data.mistakeTags;
+          delete item.data.accountBalance;
+          delete item.data.defaultRisk;
         }
 
         if (item.action === 'insert' || item.action === 'update') {
@@ -193,13 +198,15 @@ const Store = (() => {
   // ---- Default Settings ----
   const DEFAULT_SETTINGS = {
     id: 'local',
-    instruments: ['NQ', 'ES', 'YM', 'EURUSD', 'GBPUSD', 'USDJPY'],
-    sessions: ['London', 'New York', 'Asian', 'London/NY Overlap'],
+    instruments: ['EURUSD', 'GBPUSD', 'USDJPY', 'XAUUSD', 'ES', 'MES', 'NQ', 'MNQ', 'YM', 'MYM', 'CL', 'GC'],
+    sessions: ['Asian', 'London', 'New York', 'London/NY Overlap'],
     setupNames: ['Sweep + MSS + FVG', 'BOS + OB', 'Liquidity Grab', 'Breaker Block', 'Range Breakout'],
     timeframes: ['1m', '3m', '5m', '15m', '30m', '1H', '4H', 'D'],
     emotions: ['Confident', 'Calm', 'Focused', 'Neutral', 'Anxious', 'Fearful', 'Greedy', 'Frustrated', 'Excited', 'Bored', 'Impatient', 'Revenge-minded'],
     mistakeTags: ['FOMO', 'Early Entry', 'Late Entry', 'Revenge Trade', 'Oversized', 'Moved Stop', 'Chased', 'No Stop', 'Ignored Plan', 'Overtrading'],
     currency: 'USD',
+    accountBalance: 10000,
+    defaultRisk: 1,
   };
 
   // ===== SETTINGS =====
@@ -322,7 +329,9 @@ const Store = (() => {
           timeframes: s.timeframes || DEFAULT_SETTINGS.timeframes,
           emotions: s.emotions || DEFAULT_SETTINGS.emotions,
           mistakeTags: s.mistake_tags || DEFAULT_SETTINGS.mistakeTags,
-          currency: s.currency || DEFAULT_SETTINGS.currency
+          currency: s.currency || DEFAULT_SETTINGS.currency,
+          accountBalance: s.account_balance || DEFAULT_SETTINGS.accountBalance,
+          defaultRisk: s.default_risk || DEFAULT_SETTINGS.defaultRisk
         };
         await idbPut('settings', localS);
         emit('settings-changed', localS);

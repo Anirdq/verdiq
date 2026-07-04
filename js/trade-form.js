@@ -40,6 +40,33 @@ const TradeForm = (() => {
       reviewNote: '',
     };
 
+    // Restore draft if creating a new trade
+    if (!isEdit) {
+      try {
+        const draft = JSON.parse(sessionStorage.getItem('tj_trade_draft'));
+        if (draft) {
+          Object.assign(t, draft);
+        }
+      } catch (e) {}
+    }
+
+    // Override with query params if coming from Calculator
+    const hash = window.location.hash;
+    if (hash.includes('?')) {
+      const qs = hash.split('?')[1];
+      const params = new URLSearchParams(qs);
+      if (params.has('entry')) t.entryPrice = params.get('entry');
+      if (params.has('stop')) t.stopPrice = params.get('stop');
+      if (params.has('target')) t.targetPrice = params.get('target');
+      if (params.has('risk')) t.riskMoney = params.get('risk');
+      if (params.has('qty')) t.quantity = params.get('qty');
+      
+      // Auto-set direction based on Entry/Stop relationship
+      if (parseFloat(t.entryPrice) > 0 && parseFloat(t.stopPrice) > 0) {
+        t.direction = parseFloat(t.entryPrice) > parseFloat(t.stopPrice) ? 'Long' : 'Short';
+      }
+    }
+
     container.innerHTML = `
       <div class="page-container page-enter">
         <div class="page-header">
@@ -260,39 +287,52 @@ const TradeForm = (() => {
       </div>
     `;
 
-    bindEvents(container, t);
+    bindEvents(container);
   }
 
-  function bindEvents(container, defaults) {
+  function bindEvents(container) {
     const form = container.querySelector('#trade-form');
+    
+    // Save draft on any input, but make sure we are actually on the trade form
+    form.addEventListener('input', () => cacheForm(container));
+    form.addEventListener('change', () => cacheForm(container));
 
-    // Direction toggle
-    container.querySelector('#tf-direction').addEventListener('click', e => {
-      const btn = e.target.closest('.toggle-btn');
-      if (!btn) return;
-      container.querySelectorAll('#tf-direction .toggle-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      recalc(container);
+    // Calculate auto fields
+    const calcFields = ['tf-entry', 'tf-stop', 'tf-target', 'tf-exit', 'tf-qty', 'tf-fees'];
+    calcFields.forEach(id => {
+      container.querySelector('#' + id).addEventListener('input', () => {
+        recalc(container);
+      });
     });
 
-    // Rule followed toggle
-    container.querySelector('#tf-rule').addEventListener('click', e => {
-      const btn = e.target.closest('.toggle-btn');
-      if (!btn) return;
-      container.querySelectorAll('#tf-rule .toggle-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+    // Direction Toggle
+    const dirBtns = container.querySelectorAll('#tf-direction .toggle-btn');
+    dirBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        dirBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        recalc(container);
+        cacheForm(container);
+      });
     });
 
-    // Mistake chips
-    container.querySelector('#tf-mistakes').addEventListener('click', e => {
-      const chip = e.target.closest('.chip');
-      if (chip) chip.classList.toggle('selected');
+    // Rule Toggle
+    const ruleBtns = container.querySelectorAll('#tf-rule .toggle-btn');
+    ruleBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        ruleBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        cacheForm(container);
+      });
     });
 
-    // Auto-calc on price changes
-    ['tf-entry', 'tf-stop', 'tf-target', 'tf-exit', 'tf-qty', 'tf-fees'].forEach(id => {
-      const el = container.querySelector('#' + id);
-      if (el) el.addEventListener('input', () => recalc(container));
+    // Mistake Chips
+    const mistakeChips = container.querySelectorAll('#tf-mistakes .chip');
+    mistakeChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        chip.classList.toggle('selected');
+        cacheForm(container);
+      });
     });
 
     // Screenshot uploads
@@ -366,6 +406,7 @@ const TradeForm = (() => {
       if (!file) return;
       const dataUrl = await Utils.resizeImage(file, 800);
       showImage(container, field, dataUrl);
+      cacheForm(container);
     });
 
     // Drag and drop
@@ -383,6 +424,7 @@ const TradeForm = (() => {
       if (file && file.type.startsWith('image/')) {
         const dataUrl = await Utils.resizeImage(file, 800);
         showImage(container, field, dataUrl);
+        cacheForm(container);
       }
     });
   }
@@ -410,6 +452,46 @@ const TradeForm = (() => {
       <input type="file" accept="image/*" class="hidden" id="file-${field}">
     `;
     setupImageUpload(container, field);
+    cacheForm(container);
+  }
+
+  function cacheForm(container) {
+    if (editingId) return; // Don't draft if editing
+    
+    const dateEl = container.querySelector('#tf-date');
+    if (!dateEl) return; // We are no longer on the trade form page!
+    
+    const dirBtn = container.querySelector('#tf-direction .toggle-btn.active');
+    const ruleBtn = container.querySelector('#tf-rule .toggle-btn.active');
+    const selectedMistakes = Array.from(container.querySelectorAll('#tf-mistakes .chip.selected')).map(c => c.dataset.tag);
+
+    const draft = {
+      date: container.querySelector('#tf-date').value,
+      session: container.querySelector('#tf-session').value,
+      instrument: container.querySelector('#tf-instrument').value,
+      direction: dirBtn ? dirBtn.dataset.dir : 'Long',
+      timeframe: container.querySelector('#tf-timeframe').value,
+      setupName: container.querySelector('#tf-setup').value,
+      entryPrice: container.querySelector('#tf-entry').value,
+      stopPrice: container.querySelector('#tf-stop').value,
+      targetPrice: container.querySelector('#tf-target').value,
+      exitPrice: container.querySelector('#tf-exit').value,
+      quantity: container.querySelector('#tf-qty').value,
+      riskMoney: container.querySelector('#tf-risk').value,
+      plannedRR: container.querySelector('#tf-plannedrr').value,
+      resultMoney: container.querySelector('#tf-result').value,
+      resultR: container.querySelector('#tf-resultr').value,
+      fees: container.querySelector('#tf-fees').value,
+      screenshotBefore: container.querySelector('#upload-before').dataset.value || '',
+      screenshotAfter: container.querySelector('#upload-after').dataset.value || '',
+      ruleFollowed: ruleBtn ? ruleBtn.dataset.val === 'yes' : true,
+      emotionBefore: container.querySelector('#tf-emotion-before').value,
+      emotionDuring: container.querySelector('#tf-emotion-during').value,
+      emotionAfter: container.querySelector('#tf-emotion-after').value,
+      mistakeTags: selectedMistakes,
+      reviewNote: container.querySelector('#tf-review').value,
+    };
+    sessionStorage.setItem('tj_trade_draft', JSON.stringify(draft));
   }
 
   async function saveTrade(container) {
@@ -454,6 +536,7 @@ const TradeForm = (() => {
       App.toast('Trade updated ✓', 'success');
     } else {
       await Store.addTrade(trade);
+      sessionStorage.removeItem('tj_trade_draft'); // Clear draft on successful save
       App.toast('Trade saved ✓', 'success');
     }
 
