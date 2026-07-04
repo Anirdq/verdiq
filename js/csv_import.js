@@ -1,16 +1,20 @@
 const ImportCSV = (() => {
   async function handleImport(file) {
     return new Promise((resolve, reject) => {
-      Papa.parse(file, {
-        header: true,
-        skipEmptyLines: true,
-        transformHeader: function(h) {
-          return h.trim().replace(/"/g, '').toLowerCase();
-        },
-        complete: async function(results) {
-          try {
-            const rows = results.data;
-            let importCount = 0;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const text = e.target.result;
+        Papa.parse(text, {
+          header: true,
+          skipEmptyLines: true,
+          transformHeader: function(h) {
+            return h.trim().replace(/"/g, '').toLowerCase();
+          },
+          complete: async function(results) {
+            try {
+              const rows = results.data;
+              console.log("Parsed CSV Rows:", rows); // Debugging
+              let importCount = 0;
 
           for (const row of rows) {
             // Generic mapping logic
@@ -88,8 +92,11 @@ const ImportCSV = (() => {
         reject(err);
       }
     });
-  });
-}
+      };
+      reader.onerror = () => reject(new Error("File read error"));
+      reader.readAsText(file);
+    });
+  }
 
   return { handleImport };
 })();
