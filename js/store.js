@@ -128,7 +128,8 @@ const Store = (() => {
             emotion_after: item.data.emotionAfter,
             mistake_tags: item.data.mistakeTags,
             review_note: item.data.reviewNote,
-            user_id: session.user.id
+            user_id: session.user.id,
+            updated_at: new Date().toISOString()
           };
         }
 
@@ -149,36 +150,7 @@ const Store = (() => {
             mistake_tags: item.data.mistakeTags,
             updated_at: new Date().toISOString()
           };
-        } else if (item.table === 'trades') {
-          item.data = {
-            id: item.data.id,
-            user_id: session.user.id,
-            date: item.data.date,
-            session: item.data.session,
-            instrument: item.data.instrument,
-            direction: item.data.direction,
-            timeframe: item.data.timeframe,
-            setup_name: item.data.setupName,
-            entry_price: item.data.entryPrice,
-            stop_price: item.data.stopPrice,
-            target_price: item.data.targetPrice,
-            exit_price: item.data.exitPrice,
-            quantity: item.data.quantity,
-            risk_money: item.data.riskMoney,
-            planned_rr: item.data.plannedRR,
-            result_money: item.data.resultMoney,
-            result_r: item.data.resultR,
-            fees: item.data.fees,
-            screenshot_before: item.data.screenshotBefore,
-            screenshot_after: item.data.screenshotAfter,
-            rule_followed: item.data.ruleFollowed,
-            emotion_before: item.data.emotionBefore,
-            emotion_during: item.data.emotionDuring,
-            emotion_after: item.data.emotionAfter,
-            mistake_tags: item.data.mistakeTags,
-            review_note: item.data.reviewNote,
-            updated_at: new Date().toISOString()
-          };
+
         } else if (item.table === 'journal_entries') {
           item.data = {
             id: item.data.id,
