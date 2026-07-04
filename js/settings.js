@@ -268,8 +268,7 @@ const Settings = (() => {
         const trades = await Store.getTrades();
         let updated = 0;
         for (const t of trades) {
-          t.fees = fee;
-          await Store.saveTrade(t);
+          await Store.updateTrade(t.id, { fees: fee });
           updated++;
         }
         if (updated > 0) {
