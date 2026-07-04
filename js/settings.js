@@ -263,22 +263,25 @@ const Settings = (() => {
     // Bulk Apply Fee
     container.querySelector('#set-bulk-apply-fee').addEventListener('click', async () => {
       const s = await Store.getSettings();
-      const fee = s.defaultFee || 0;
-      if (confirm(`Apply $${fee} commission fee to ALL past trades? This will also update their P&L.`)) {
+      const baseFee = s.defaultFee || 0;
+      if (confirm(`Apply $${baseFee} commission fee (per quantity) to ALL past trades? This will update their P&L.`)) {
         const trades = await Store.getTrades();
         let updated = 0;
         for (const t of trades) {
           const oldFee = parseFloat(t.fees) || 0;
           const oldPnl = parseFloat(t.resultMoney) || 0;
           
-          t.resultMoney = oldPnl + oldFee - fee;
-          t.fees = fee;
+          const qty = parseFloat(t.quantity) || 1;
+          const newFee = baseFee * qty;
           
-          await Store.updateTrade(t.id, { fees: fee, resultMoney: t.resultMoney });
+          t.resultMoney = oldPnl + oldFee - newFee;
+          t.fees = newFee;
+          
+          await Store.updateTrade(t.id, { fees: newFee, resultMoney: t.resultMoney });
           updated++;
         }
         if (updated > 0) {
-          App.toast(`Applied $${fee} fee to ${updated} trades`, 'success');
+          App.toast(`Applied fee to ${updated} trades`, 'success');
           await render(container);
         }
       }
