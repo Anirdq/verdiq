@@ -269,13 +269,11 @@ const Settings = (() => {
         let updated = 0;
         for (const t of trades) {
           const oldFee = parseFloat(t.fees) || 0;
-          if (t.entryPrice && t.exitPrice && t.quantity) {
-            t.resultMoney = Utils.calcPnL(t.entryPrice, t.exitPrice, t.quantity, t.direction, fee);
-          } else {
-            const oldPnl = parseFloat(t.resultMoney) || 0;
-            t.resultMoney = oldPnl + oldFee - fee;
-          }
+          const oldPnl = parseFloat(t.resultMoney) || 0;
+          
+          t.resultMoney = oldPnl + oldFee - fee;
           t.fees = fee;
+          
           await Store.updateTrade(t.id, { fees: fee, resultMoney: t.resultMoney });
           updated++;
         }
