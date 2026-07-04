@@ -139,17 +139,16 @@ const Store = (() => {
 
         // Settings mapping
         if (item.table === 'user_settings') {
-          item.data.user_id = session.user.id;
-          item.data.setup_names = item.data.setupNames;
-          item.data.mistake_tags = item.data.mistakeTags;
-          item.data.account_balance = item.data.accountBalance;
-          item.data.default_risk = item.data.defaultRisk;
-          
-          delete item.data.id;
-          delete item.data.setupNames;
-          delete item.data.mistakeTags;
-          delete item.data.accountBalance;
-          delete item.data.defaultRisk;
+          // Map only columns that exist in the Supabase schema
+          item.data = {
+            user_id: session.user.id,
+            instruments: item.data.instruments,
+            sessions: item.data.sessions,
+            setup_names: item.data.setupNames,
+            emotions: item.data.emotions,
+            mistake_tags: item.data.mistakeTags,
+            updated_at: new Date().toISOString()
+          };
         }
 
         if (item.action === 'insert' || item.action === 'update') {
@@ -320,18 +319,17 @@ const Store = (() => {
     try {
       // Fetch Settings
       const { data: s } = await window.supabaseClient.from('user_settings').select('*').single();
+      let currentLocal = await idbGet('settings', 'local');
+      if (!currentLocal) currentLocal = DEFAULT_SETTINGS;
+      
       if (s) {
         const localS = {
-          id: 'local',
-          instruments: s.instruments || DEFAULT_SETTINGS.instruments,
-          sessions: s.sessions || DEFAULT_SETTINGS.sessions,
-          setupNames: s.setup_names || DEFAULT_SETTINGS.setupNames,
-          timeframes: s.timeframes || DEFAULT_SETTINGS.timeframes,
-          emotions: s.emotions || DEFAULT_SETTINGS.emotions,
-          mistakeTags: s.mistake_tags || DEFAULT_SETTINGS.mistakeTags,
-          currency: s.currency || DEFAULT_SETTINGS.currency,
-          accountBalance: s.account_balance || DEFAULT_SETTINGS.accountBalance,
-          defaultRisk: s.default_risk || DEFAULT_SETTINGS.defaultRisk
+          ...currentLocal,
+          instruments: s.instruments || currentLocal.instruments,
+          sessions: s.sessions || currentLocal.sessions,
+          setupNames: s.setup_names || currentLocal.setupNames,
+          emotions: s.emotions || currentLocal.emotions,
+          mistakeTags: s.mistake_tags || currentLocal.mistakeTags
         };
         await idbPut('settings', localS);
         emit('settings-changed', localS);
