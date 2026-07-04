@@ -862,3 +862,6 @@ table { border-collapse: collapse; width: 100%; }
     padding: var(--space-3) var(--space-3) calc(var(--space-20) + 60px);
   }
 }
+
+[data-theme="light"] .sidebar-logo img, [data-theme="light"] .auth-logo img, [data-theme="light"] .app > div > img { filter: invert(1) hue-rotate(180deg); }
+
