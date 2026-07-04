@@ -304,6 +304,13 @@
   border-radius: var(--radius-md);
   padding: 2px;
   gap: 2px;
+  max-width: 100%;
+  overflow-x: auto;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.toggle-group::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
 }
 
 .toggle-btn {
