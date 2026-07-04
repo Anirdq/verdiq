@@ -13,7 +13,7 @@ const ImportCSV = (() => {
           complete: async function(results) {
             try {
               const rows = results.data;
-              console.log("Parsed CSV Rows:", rows); // Debugging
+              console.error("DEBUG Parsed CSV Rows:", JSON.stringify(rows[0])); // Debugging
               let importCount = 0;
 
           for (const row of rows) {
