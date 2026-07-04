@@ -167,7 +167,7 @@ const Utils = (() => {
     const pnls = trades.map(t => parseFloat(t.resultMoney) || 0);
     const rs = trades.map(t => parseFloat(t.resultR) || 0);
 
-    const BREAKEVEN_THRESHOLD = 10.00;
+    const BREAKEVEN_THRESHOLD = 0.00;
 
     const wins = trades.filter(t => (parseFloat(t.resultMoney) || 0) > BREAKEVEN_THRESHOLD);
     const losses = trades.filter(t => (parseFloat(t.resultMoney) || 0) < -BREAKEVEN_THRESHOLD);
@@ -287,7 +287,7 @@ const Utils = (() => {
     if (val === null || val === undefined || val === '') return '';
     const num = parseFloat(val);
     if (isNaN(num)) return '';
-    const threshold = isR ? 0.1 : 10.00; // 10.00 is BREAKEVEN_THRESHOLD
+    const threshold = isR ? 0.0 : 0.00; 
     return num > threshold ? 'text-profit' : num < -threshold ? 'text-loss' : 'text-muted';
   }
 
@@ -295,7 +295,7 @@ const Utils = (() => {
     if (val === null || val === undefined || val === '') return '';
     const n = parseFloat(val);
     if (isNaN(n)) return '';
-    const threshold = isR ? 0.1 : 10.00;
+    const threshold = isR ? 0.0 : 0.00;
     return n > threshold ? '+' : n < -threshold ? '' : '';
   }
 
