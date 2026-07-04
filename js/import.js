@@ -1,35 +1,16 @@
 const ImportCSV = (() => {
-  // Very basic CSV parser
-  function parseCSV(text) {
-    const lines = text.split('\n').filter(line => line.trim() !== '');
-    if (lines.length < 2) return [];
-    
-    // Parse headers
-    const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, '').toLowerCase());
-    
-    const results = [];
-    for (let i = 1; i < lines.length; i++) {
-      // Very basic split by comma, ignoring commas inside quotes is hard with regex,
-      // but for basic tradovate/MT4 it usually works if we just split.
-      // A better regex for CSV splitting:
-      const row = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.trim().replace(/"/g, ''));
-      if (row.length === headers.length) {
-        const obj = {};
-        headers.forEach((h, idx) => { obj[h] = row[idx]; });
-        results.push(obj);
-      }
-    }
-    return results;
-  }
-
   async function handleImport(file) {
     return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        try {
-          const text = e.target.result;
-          const rows = parseCSV(text);
-          let importCount = 0;
+      Papa.parse(file, {
+        header: true,
+        skipEmptyLines: true,
+        transformHeader: function(h) {
+          return h.trim().replace(/"/g, '').toLowerCase();
+        },
+        complete: async function(results) {
+          try {
+            const rows = results.data;
+            let importCount = 0;
 
           for (const row of rows) {
             // Generic mapping logic
@@ -102,11 +83,13 @@ const ImportCSV = (() => {
         } catch (err) {
           reject(err);
         }
-      };
-      reader.onerror = () => reject(new Error('Failed to read file'));
-      reader.readAsText(file);
+      },
+      error: function(err) {
+        reject(err);
+      }
     });
-  }
+  });
+}
 
   return { handleImport };
 })();
