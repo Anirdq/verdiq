@@ -13,6 +13,10 @@ const ImportCSV = (() => {
           complete: async function(results) {
             try {
               const rows = results.data;
+              if (rows.length > 0 && !window.hasAlertedHeaders) {
+                alert("CSV Headers found: " + Object.keys(rows[0]).join(", "));
+                window.hasAlertedHeaders = true;
+              }
               console.error("DEBUG Parsed CSV Rows:", JSON.stringify(rows[0])); // Debugging
               let importCount = 0;
 
