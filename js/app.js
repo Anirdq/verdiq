@@ -274,10 +274,9 @@ const App = (() => {
 
       <div class="mobile-overlay" id="mobile-overlay"></div>
 
-      <button class="mobile-nav-toggle" id="mobile-toggle">☰</button>
-
       <header class="mobile-top-bar" id="mobile-top-bar">
         <div class="mobile-logo">
+          <button class="mobile-menu-btn" id="mobile-toggle" style="background:none; border:none; color:white; font-size:24px; display:flex; align-items:center; justify-content:center; padding-right:8px; cursor:pointer;">☰</button>
           <img src="/icon.png" alt="Verdiq">
           <span>Verdiq</span>
         </div>
