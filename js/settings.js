@@ -280,12 +280,12 @@ const Settings = (() => {
         
         try {
           const count = await ImportCSV.handleImport(file);
-          toast(`Successfully imported ${count} trades!`, 'success');
+          App.toast(`Successfully imported ${count} trades!`, 'success');
           // Update counts
           const newTrades = await Store.getTrades();
           container.querySelector('.settings-section-desc strong').textContent = newTrades.length;
         } catch (err) {
-          toast(`Import failed: ${err.message}`, 'error');
+          App.toast(`Import failed: ${err.message}`, 'error');
         }
         csvInput.value = ''; // reset
       });
