@@ -65,6 +65,10 @@ const ImportCSV = (() => {
               }
             }
             const qty = parseFloat(row['qty'] || row['quantity'] || row['volume']) || 1;
+            
+            // Extract Fees/Commission
+            let feeStr = String(row['commission'] || row['fee'] || row['fees'] || '0').replace(/[^0-9.]+/g, "");
+            const fee = parseFloat(feeStr) || 0;
 
             const trade = {
               id: Utils.uuid(),
@@ -74,6 +78,7 @@ const ImportCSV = (() => {
               entryPrice: entry,
               exitPrice: exit,
               quantity: qty,
+              fees: fee,
               resultMoney: pnl,
               setupName: 'Imported Trade',
               ruleFollowed: true,
