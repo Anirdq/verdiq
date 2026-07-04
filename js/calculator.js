@@ -59,15 +59,15 @@ const Calculator = (() => {
           <div class="form-row form-row-3 mb-4">
             <div class="form-group">
               <label class="form-label">Account Balance ($)</label>
-              <input type="number" step="any" class="form-input mono calc-input" id="calc-bal" value="${bal}">
+              <input type="number" inputmode="decimal" step="any" class="form-input mono calc-input" id="calc-bal" value="${bal}">
             </div>
             <div class="form-group">
               <label class="form-label">Risk (%)</label>
-              <input type="number" step="any" class="form-input mono calc-input" id="calc-risk-pct" value="${riskPct}">
+              <input type="number" inputmode="decimal" step="any" class="form-input mono calc-input" id="calc-risk-pct" value="${riskPct}">
             </div>
             <div class="form-group">
               <label class="form-label">Risk Amount ($)</label>
-              <input type="number" step="any" class="form-input mono calc-input" id="calc-risk-amt" value="${riskAmt}">
+              <input type="number" inputmode="decimal" step="any" class="form-input mono calc-input" id="calc-risk-amt" value="${riskAmt}">
             </div>
           </div>
 
@@ -98,7 +98,7 @@ const Calculator = (() => {
                     <option value="100">GC ($100)</option>
                   </optgroup>
                 </select>
-                <input type="number" step="any" class="form-input mono calc-input" id="calc-multiplier" value="${mult}" style="flex:1">
+                <input type="number" inputmode="decimal" step="any" class="form-input mono calc-input" id="calc-multiplier" value="${mult}" style="flex:1">
               </div>
               <div class="form-help">Select an index or type the multiplier (e.g. NQ = 20)</div>
             </div>
@@ -107,15 +107,15 @@ const Calculator = (() => {
           <div class="form-row form-row-3 mb-4">
             <div class="form-group">
               <label class="form-label">Entry Price</label>
-              <input type="number" step="any" class="form-input mono calc-input" id="calc-entry" value="${entry}" placeholder="e.g. 4000.25">
+              <input type="number" inputmode="decimal" step="any" class="form-input mono calc-input" id="calc-entry" value="${entry}" placeholder="e.g. 4000.25">
             </div>
             <div class="form-group">
               <label class="form-label">Stop Loss</label>
-              <input type="number" step="any" class="form-input mono calc-input" id="calc-stop" value="${stop}" placeholder="e.g. 3995.00">
+              <input type="number" inputmode="decimal" step="any" class="form-input mono calc-input" id="calc-stop" value="${stop}" placeholder="e.g. 3995.00">
             </div>
             <div class="form-group">
               <label class="form-label">Target (Optional)</label>
-              <input type="number" step="any" class="form-input mono calc-input" id="calc-target" value="${target}" placeholder="e.g. 4010.50">
+              <input type="number" inputmode="decimal" step="any" class="form-input mono calc-input" id="calc-target" value="${target}" placeholder="e.g. 4010.50">
             </div>
           </div>
 

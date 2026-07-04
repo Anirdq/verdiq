@@ -29,14 +29,14 @@ const Settings = (() => {
             <div class="form-group">
               <label class="form-label">Account Balance ($)</label>
               <div style="display:flex;gap:10px">
-                <input type="number" step="any" class="form-input" id="set-account-balance" value="${settings.accountBalance || 10000}">
+                <input type="number" inputmode="decimal" step="any" class="form-input" id="set-account-balance" value="${settings.accountBalance || 10000}">
                 <button class="btn btn-secondary btn-sm" id="set-save-balance">Save</button>
               </div>
             </div>
             <div class="form-group">
               <label class="form-label">Default Risk (%)</label>
               <div style="display:flex;gap:10px">
-                <input type="number" step="any" class="form-input" id="set-default-risk" value="${settings.defaultRisk || 1}">
+                <input type="number" inputmode="decimal" step="any" class="form-input" id="set-default-risk" value="${settings.defaultRisk || 1}">
                 <button class="btn btn-secondary btn-sm" id="set-save-risk">Save</button>
               </div>
             </div>

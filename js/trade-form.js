@@ -139,52 +139,52 @@ const TradeForm = (() => {
             <div class="form-row form-row-4 mb-4">
               <div class="form-group">
                 <label class="form-label">Entry Price</label>
-                <input type="number" step="any" class="form-input mono" id="tf-entry" value="${t.entryPrice}" placeholder="0.00">
+                <input type="number" inputmode="decimal" step="any" class="form-input mono" id="tf-entry" value="${t.entryPrice}" placeholder="0.00">
               </div>
               <div class="form-group">
                 <label class="form-label">Stop Loss</label>
-                <input type="number" step="any" class="form-input mono" id="tf-stop" value="${t.stopPrice}" placeholder="0.00">
+                <input type="number" inputmode="decimal" step="any" class="form-input mono" id="tf-stop" value="${t.stopPrice}" placeholder="0.00">
               </div>
               <div class="form-group">
                 <label class="form-label">Target</label>
-                <input type="number" step="any" class="form-input mono" id="tf-target" value="${t.targetPrice}" placeholder="0.00">
+                <input type="number" inputmode="decimal" step="any" class="form-input mono" id="tf-target" value="${t.targetPrice}" placeholder="0.00">
               </div>
               <div class="form-group">
                 <label class="form-label">Exit Price</label>
-                <input type="number" step="any" class="form-input mono" id="tf-exit" value="${t.exitPrice}" placeholder="0.00">
+                <input type="number" inputmode="decimal" step="any" class="form-input mono" id="tf-exit" value="${t.exitPrice}" placeholder="0.00">
               </div>
             </div>
 
             <div class="form-row form-row-4 mb-4">
               <div class="form-group">
                 <label class="form-label">Quantity / Contracts</label>
-                <input type="number" step="any" class="form-input mono" id="tf-qty" value="${t.quantity}" placeholder="1">
+                <input type="number" inputmode="decimal" step="any" class="form-input mono" id="tf-qty" value="${t.quantity}" placeholder="1">
               </div>
               <div class="form-group auto-calc">
                 <label class="form-label">Risk ($)</label>
-                <input type="number" step="any" class="form-input mono" id="tf-risk" value="${t.riskMoney}" placeholder="Auto">
+                <input type="number" inputmode="decimal" step="any" class="form-input mono" id="tf-risk" value="${t.riskMoney}" placeholder="Auto">
                 <span class="auto-calc-badge">AUTO</span>
               </div>
               <div class="form-group auto-calc">
                 <label class="form-label">Planned R:R</label>
-                <input type="number" step="any" class="form-input mono" id="tf-plannedrr" value="${t.plannedRR}" placeholder="Auto" readonly>
+                <input type="number" inputmode="decimal" step="any" class="form-input mono" id="tf-plannedrr" value="${t.plannedRR}" placeholder="Auto" readonly>
                 <span class="auto-calc-badge">AUTO</span>
               </div>
               <div class="form-group">
                 <label class="form-label">Fees / Commission</label>
-                <input type="number" step="any" class="form-input mono" id="tf-fees" value="${t.fees}" placeholder="0.00">
+                <input type="number" inputmode="decimal" step="any" class="form-input mono" id="tf-fees" value="${t.fees}" placeholder="0.00">
               </div>
             </div>
 
             <div class="form-row form-row-2">
               <div class="form-group auto-calc">
                 <label class="form-label">Result ($)</label>
-                <input type="number" step="any" class="form-input mono" id="tf-result" value="${t.resultMoney}" placeholder="Auto">
+                <input type="number" inputmode="decimal" step="any" class="form-input mono" id="tf-result" value="${t.resultMoney}" placeholder="Auto">
                 <span class="auto-calc-badge">AUTO</span>
               </div>
               <div class="form-group auto-calc">
                 <label class="form-label">Result (R)</label>
-                <input type="number" step="any" class="form-input mono" id="tf-resultr" value="${t.resultR}" placeholder="Auto" readonly>
+                <input type="number" inputmode="decimal" step="any" class="form-input mono" id="tf-resultr" value="${t.resultR}" placeholder="Auto" readonly>
                 <span class="auto-calc-badge">AUTO</span>
               </div>
             </div>
