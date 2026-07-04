@@ -42,7 +42,10 @@ const ImportCSV = (() => {
             const instrument = row['symbol'] || row['item'] || row['contract'] || 'UNKNOWN';
             
             // Try to figure out PnL
-            let pnlStr = String(row['p&l'] || row['profit'] || row['net pnl'] || row['pnl'] || '0').trim();
+            let pnlStr = String(
+              row['p&l'] || row['profit'] || row['net pnl'] || row['pnl'] || 
+              row['p/l'] || row['net p/l'] || row['gross p/l'] || row['realized'] || '0'
+            ).trim();
             const isNegative = pnlStr.includes('(') && pnlStr.includes(')') || pnlStr.includes('-');
             pnlStr = pnlStr.replace(/[^0-9.]+/g, "");
             let pnl = parseFloat(pnlStr) || 0;
@@ -64,13 +67,16 @@ const ImportCSV = (() => {
             let entry = parseFloat(row['entry price'] || row['price'] || row['open price']) || 0;
             let exit = parseFloat(row['exit price'] || row['close price']) || 0;
 
-            if (row['buyprice'] && row['sellprice']) {
+            const buyPrice = row['buyprice'] || row['buy price'];
+            const sellPrice = row['sellprice'] || row['sell price'];
+
+            if (buyPrice && sellPrice) {
               if (dir === 'Long') {
-                entry = parseFloat(row['buyprice']) || 0;
-                exit = parseFloat(row['sellprice']) || 0;
+                entry = parseFloat(buyPrice) || 0;
+                exit = parseFloat(sellPrice) || 0;
               } else {
-                entry = parseFloat(row['sellprice']) || 0;
-                exit = parseFloat(row['buyprice']) || 0;
+                entry = parseFloat(sellPrice) || 0;
+                exit = parseFloat(buyPrice) || 0;
               }
             }
             const qty = parseFloat(row['qty'] || row['quantity'] || row['volume']) || 1;
