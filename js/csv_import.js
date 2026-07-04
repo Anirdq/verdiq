@@ -26,15 +26,28 @@ const ImportCSV = (() => {
 
             const instrument = row['symbol'] || row['item'] || row['contract'] || 'UNKNOWN';
             
-            // Try to figure out PnL
-            let pnlStr = String(
-              row['p&l'] || row['profit'] || row['net pnl'] || row['pnl'] || 
-              row['p/l'] || row['net p/l'] || row['gross p/l'] || row['realized'] || '0'
-            ).trim();
+            // Extract Fees/Commission early so we can subtract it if we are using Gross PnL
+            let feeStr = String(row['commission'] || row['fee'] || row['fees'] || '0').replace(/[^0-9.]+/g, "");
+            const fee = parseFloat(feeStr) || 0;
+
+            // Try to figure out PnL (Prioritize NET over GROSS)
+            let rawPnlStr = row['net pnl'] || row['net p/l'] || row['net profit'] || null;
+            let isNet = true;
+            if (!rawPnlStr) {
+              rawPnlStr = row['p&l'] || row['profit'] || row['pnl'] || row['p/l'] || row['gross p/l'] || row['realized'] || '0';
+              isNet = false;
+            }
+
+            let pnlStr = String(rawPnlStr).trim();
             const isNegative = pnlStr.includes('(') && pnlStr.includes(')') || pnlStr.includes('-');
             pnlStr = pnlStr.replace(/[^0-9.]+/g, "");
             let pnl = parseFloat(pnlStr) || 0;
             if (isNegative) pnl = -pnl;
+            
+            // If we grabbed a Gross PnL column, subtract the fee to get Net PnL
+            if (!isNet && fee > 0) {
+              pnl = pnl - fee;
+            }
 
             // Direction
             let dir = 'Long';
@@ -66,10 +79,6 @@ const ImportCSV = (() => {
             }
             const qty = parseFloat(row['qty'] || row['quantity'] || row['volume']) || 1;
             
-            // Extract Fees/Commission
-            let feeStr = String(row['commission'] || row['fee'] || row['fees'] || '0').replace(/[^0-9.]+/g, "");
-            const fee = parseFloat(feeStr) || 0;
-
             const trade = {
               id: Utils.uuid(),
               date: new Date(dateStr).toISOString(),
