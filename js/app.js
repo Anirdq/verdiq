@@ -195,7 +195,7 @@ const App = (() => {
       <nav class="sidebar" id="sidebar">
         <div class="sidebar-header">
           <div class="sidebar-logo">
-            <div class="sidebar-logo-icon">📈</div>
+            <img src="/icon.png" alt="Verdiq" style="width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;">
             <div>
               <div class="sidebar-logo-text">Verdiq</div>
               <span class="sidebar-logo-sub">Forex & Futures</span>
