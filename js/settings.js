@@ -264,11 +264,19 @@ const Settings = (() => {
     container.querySelector('#set-bulk-apply-fee').addEventListener('click', async () => {
       const s = await Store.getSettings();
       const fee = s.defaultFee || 0;
-      if (confirm(`Apply $${fee} commission fee to ALL past trades?`)) {
+      if (confirm(`Apply $${fee} commission fee to ALL past trades? This will also update their P&L.`)) {
         const trades = await Store.getTrades();
         let updated = 0;
         for (const t of trades) {
-          await Store.updateTrade(t.id, { fees: fee });
+          const oldFee = parseFloat(t.fees) || 0;
+          if (t.entryPrice && t.exitPrice && t.quantity) {
+            t.resultMoney = Utils.calcPnL(t.entryPrice, t.exitPrice, t.quantity, t.direction, fee);
+          } else {
+            const oldPnl = parseFloat(t.resultMoney) || 0;
+            t.resultMoney = oldPnl + oldFee - fee;
+          }
+          t.fees = fee;
+          await Store.updateTrade(t.id, { fees: fee, resultMoney: t.resultMoney });
           updated++;
         }
         if (updated > 0) {
