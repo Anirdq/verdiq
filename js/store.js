@@ -379,6 +379,7 @@ const Store = (() => {
       // Fetch Trades
       const { data: t } = await window.supabaseClient.from('trades').select('*');
       if (t) {
+        if (t.length > 0) console.error("DEBUG Cloud Trade [0]:", JSON.stringify(t[0]));
         const localTrades = await idbGet('trades');
         const pendingQueue = await idbGet('sync_queue');
         const pendingIds = new Set(pendingQueue.filter(i => i.table === 'trades').map(i => i.data.id));

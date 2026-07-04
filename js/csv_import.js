@@ -84,6 +84,10 @@ const ImportCSV = (() => {
               mistakeTags: [],
             };
 
+            if (importCount === 0) {
+              console.error("DEBUG Pre-Save Trade [0]:", JSON.stringify(trade));
+            }
+
             await Store.addTrade(trade);
             importCount++;
           }
