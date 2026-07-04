@@ -208,26 +208,34 @@ const Settings = (() => {
     });
 
     // Save Account Balance
-    container.querySelector('#set-save-balance').addEventListener('click', async () => {
+    const saveBalance = async () => {
       const val = parseFloat(container.querySelector('#set-account-balance').value);
       if (!isNaN(val)) {
         const s = await Store.getSettings();
-        s.accountBalance = val;
-        await Store.updateSettings(s);
-        App.toast('Account balance updated', 'success');
+        if (s.accountBalance !== val) {
+          s.accountBalance = val;
+          await Store.updateSettings(s);
+          App.toast('Account balance updated', 'success');
+        }
       }
-    });
+    };
+    container.querySelector('#set-save-balance').addEventListener('click', saveBalance);
+    container.querySelector('#set-account-balance').addEventListener('blur', saveBalance);
 
     // Save Default Risk
-    container.querySelector('#set-save-risk').addEventListener('click', async () => {
+    const saveRisk = async () => {
       const val = parseFloat(container.querySelector('#set-default-risk').value);
       if (!isNaN(val)) {
         const s = await Store.getSettings();
-        s.defaultRisk = val;
-        await Store.updateSettings(s);
-        App.toast('Default risk updated', 'success');
+        if (s.defaultRisk !== val) {
+          s.defaultRisk = val;
+          await Store.updateSettings(s);
+          App.toast('Default risk updated', 'success');
+        }
       }
-    });
+    };
+    container.querySelector('#set-save-risk').addEventListener('click', saveRisk);
+    container.querySelector('#set-default-risk').addEventListener('blur', saveRisk);
 
     // Export/Import
     container.querySelector('#set-export').addEventListener('click', () => {

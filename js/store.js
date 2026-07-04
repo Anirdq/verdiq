@@ -152,7 +152,7 @@ const Store = (() => {
         }
 
         if (item.action === 'insert' || item.action === 'update') {
-          const { error } = await sb.from(item.table).upsert(item.data);
+          const { error } = await sb.from(item.table).upsert(item.data, { onConflict: item.table === 'user_settings' ? 'user_id' : 'id' });
           if (!error) success = true;
           else console.error('Sync error:', error);
         } else if (item.action === 'delete') {
@@ -327,11 +327,11 @@ const Store = (() => {
       if (s) {
         const localS = {
           ...currentLocal,
-          instruments: s.instruments || currentLocal.instruments,
-          sessions: s.sessions || currentLocal.sessions,
-          setupNames: s.setup_names || currentLocal.setupNames,
-          emotions: s.emotions || currentLocal.emotions,
-          mistakeTags: s.mistake_tags || currentLocal.mistakeTags
+          instruments: Array.from(new Set([...(currentLocal.instruments || []), ...(s.instruments || [])])),
+          sessions: Array.from(new Set([...(currentLocal.sessions || []), ...(s.sessions || [])])),
+          setupNames: Array.from(new Set([...(currentLocal.setupNames || []), ...(s.setup_names || [])])),
+          emotions: Array.from(new Set([...(currentLocal.emotions || []), ...(s.emotions || [])])),
+          mistakeTags: Array.from(new Set([...(currentLocal.mistakeTags || []), ...(s.mistake_tags || [])]))
         };
         await idbPut('settings', localS);
         emit('settings-changed', localS);
