@@ -1,4 +1,4 @@
-const CACHE_NAME = 'verdiq-cache-v4';
+const CACHE_NAME = 'verdiq-cache-v5';
 const urlsToCache = [
   '/',
   '/index.html',
