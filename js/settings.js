@@ -147,7 +147,7 @@ const Settings = (() => {
         <div class="settings-section settings-danger-zone">
           <h3 class="settings-section-title">⚠️ Danger Zone</h3>
           <p class="settings-section-desc">These actions are irreversible. Make sure to export a backup first.</p>
-          <div class="flex gap-3">
+          <div class="flex flex-wrap gap-3">
             <button class="btn btn-danger" id="set-clear-trades">Delete All Trades</button>
             <button class="btn btn-danger" id="set-clear-all">Delete Everything & Logout</button>
           </div>
