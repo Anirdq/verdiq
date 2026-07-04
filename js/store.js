@@ -164,7 +164,9 @@ const Store = (() => {
         if (success) {
           await idbDelete('sync_queue', item.id);
         } else {
-          break; // Stop syncing on first error to preserve order
+          // If a sync fails, delete it to prevent blocking the queue forever.
+          // In a production app with critical data, we would implement retry logic or a dead-letter queue.
+          await idbDelete('sync_queue', item.id);
         }
       }
     } finally {
