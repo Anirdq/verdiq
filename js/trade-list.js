@@ -141,7 +141,7 @@ const TradeList = (() => {
 
     trades.forEach(t => {
       const pnl = parseFloat(t.resultMoney) || 0;
-      const rowClass = pnl > 0 ? 'row-win' : pnl < 0 ? 'row-loss' : '';
+      const rowClass = pnl > 10 ? 'row-win' : pnl < -10 ? 'row-loss' : '';
       const isExpanded = expandedId === t.id;
       const mistakeHtml = (t.mistakeTags || []).slice(0, 2).map(m => `<span class="tag tag-warning" style="font-size:0.625rem">${m}</span>`).join(' ');
 

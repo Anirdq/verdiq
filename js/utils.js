@@ -167,9 +167,11 @@ const Utils = (() => {
     const pnls = trades.map(t => parseFloat(t.resultMoney) || 0);
     const rs = trades.map(t => parseFloat(t.resultR) || 0);
 
-    const wins = trades.filter(t => (parseFloat(t.resultMoney) || 0) > 0);
-    const losses = trades.filter(t => (parseFloat(t.resultMoney) || 0) < 0);
-    const breakeven = trades.filter(t => (parseFloat(t.resultMoney) || 0) === 0);
+    const BREAKEVEN_THRESHOLD = 10.00;
+
+    const wins = trades.filter(t => (parseFloat(t.resultMoney) || 0) > BREAKEVEN_THRESHOLD);
+    const losses = trades.filter(t => (parseFloat(t.resultMoney) || 0) < -BREAKEVEN_THRESHOLD);
+    const breakeven = trades.filter(t => Math.abs(parseFloat(t.resultMoney) || 0) <= BREAKEVEN_THRESHOLD);
 
     const grossProfit = wins.reduce((s, t) => s + (parseFloat(t.resultMoney) || 0), 0);
     const grossLoss = Math.abs(losses.reduce((s, t) => s + (parseFloat(t.resultMoney) || 0), 0));
@@ -188,14 +190,15 @@ const Utils = (() => {
 
     // Sort by date for streak calc
     const sorted = [...trades].sort((a, b) => new Date(a.date) - new Date(b.date));
+    const BREAKEVEN_THRESHOLD = 10.00;
     for (const t of sorted) {
       const pnl = parseFloat(t.resultMoney) || 0;
-      if (pnl > 0) {
+      if (pnl > BREAKEVEN_THRESHOLD) {
         curWinStreak++;
         curLossStreak = 0;
         maxConsecWins = Math.max(maxConsecWins, curWinStreak);
         currentStreak = { type: 'win', count: curWinStreak };
-      } else if (pnl < 0) {
+      } else if (pnl < -BREAKEVEN_THRESHOLD) {
         curLossStreak++;
         curWinStreak = 0;
         maxConsecLosses = Math.max(maxConsecLosses, curLossStreak);
@@ -281,16 +284,20 @@ const Utils = (() => {
     return div.innerHTML;
   }
 
-  function pnlClass(val) {
-    const n = parseFloat(val) || 0;
-    if (n > 0) return 'text-profit';
-    if (n < 0) return 'text-loss';
-    return 'text-muted';
+  function pnlClass(val, isR = false) {
+    if (val === null || val === undefined || val === '') return '';
+    const num = parseFloat(val);
+    if (isNaN(num)) return '';
+    const threshold = isR ? 0.1 : 10.00; // 10.00 is BREAKEVEN_THRESHOLD
+    return num > threshold ? 'text-profit' : num < -threshold ? 'text-loss' : 'text-muted';
   }
 
-  function pnlSign(val) {
-    const n = parseFloat(val) || 0;
-    return n > 0 ? '+' : n < 0 ? '' : '';
+  function pnlSign(val, isR = false) {
+    if (val === null || val === undefined || val === '') return '';
+    const n = parseFloat(val);
+    if (isNaN(n)) return '';
+    const threshold = isR ? 0.1 : 10.00;
+    return n > threshold ? '+' : n < -threshold ? '' : '';
   }
 
   // Resize image to fit within maxDim and compress to JPEG for localStorage
