@@ -191,6 +191,7 @@ const Store = (() => {
         }
 
         if (item.action === 'insert' || item.action === 'update') {
+          console.error("DEBUG Upsert Payload:", JSON.stringify(item.data));
           const { error } = await sb.from(item.table).upsert(item.data, { onConflict: item.table === 'user_settings' ? 'user_id' : 'id' });
           if (!error) success = true;
           else console.error('Sync error:', error);
@@ -386,32 +387,33 @@ const Store = (() => {
 
         await idbDelete('trades');
         for (const row of t) {
+          const existing = localTrades.find(lt => lt.id === row.id) || {};
           await idbPut('trades', {
             id: row.id,
-            date: row.date,
-            session: row.session,
-            instrument: row.instrument,
-            direction: row.direction,
-            timeframe: row.timeframe,
-            setupName: row.setup_name,
-            entryPrice: row.entry_price,
-            stopPrice: row.stop_price,
-            targetPrice: row.target_price,
-            exitPrice: row.exit_price,
-            quantity: row.quantity,
-            riskMoney: row.risk_money,
-            plannedRR: row.planned_rr,
-            resultMoney: row.result_money,
-            resultR: row.result_r,
-            fees: row.fees,
-            screenshotBefore: row.screenshot_before,
-            screenshotAfter: row.screenshot_after,
-            ruleFollowed: row.rule_followed,
-            emotionBefore: row.emotion_before,
-            emotionDuring: row.emotion_during,
-            emotionAfter: row.emotion_after,
-            mistakeTags: row.mistake_tags || [],
-            reviewNote: row.review_note
+            date: row.date || existing.date,
+            session: row.session || existing.session,
+            instrument: row.instrument || existing.instrument,
+            direction: row.direction || existing.direction,
+            timeframe: row.timeframe || existing.timeframe,
+            setupName: row.setup_name || existing.setupName,
+            entryPrice: row.entry_price !== null ? row.entry_price : existing.entryPrice,
+            stopPrice: row.stop_price !== null ? row.stop_price : existing.stopPrice,
+            targetPrice: row.target_price !== null ? row.target_price : existing.targetPrice,
+            exitPrice: row.exit_price !== null ? row.exit_price : existing.exitPrice,
+            quantity: row.quantity !== null ? row.quantity : existing.quantity,
+            riskMoney: row.risk_money !== null ? row.risk_money : existing.riskMoney,
+            plannedRR: row.planned_rr !== null ? row.planned_rr : existing.plannedRR,
+            resultMoney: row.result_money !== null ? row.result_money : existing.resultMoney,
+            resultR: row.result_r !== null ? row.result_r : existing.resultR,
+            fees: row.fees !== null ? row.fees : existing.fees,
+            screenshotBefore: row.screenshot_before || existing.screenshotBefore,
+            screenshotAfter: row.screenshot_after || existing.screenshotAfter,
+            ruleFollowed: row.rule_followed !== null ? row.rule_followed : existing.ruleFollowed,
+            emotionBefore: row.emotion_before || existing.emotionBefore,
+            emotionDuring: row.emotion_during || existing.emotionDuring,
+            emotionAfter: row.emotion_after || existing.emotionAfter,
+            mistakeTags: row.mistake_tags || existing.mistakeTags || [],
+            reviewNote: row.review_note || existing.reviewNote
           });
         }
         
