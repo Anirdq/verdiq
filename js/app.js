@@ -9,6 +9,7 @@ const App = (() => {
 
   const routes = {
     '/dashboard': { module: () => Dashboard, title: 'Dashboard' },
+    '/insights': { module: () => Insights, title: 'Insights' },
     '/new-trade': { module: () => TradeForm, title: 'New Trade' },
     '/trades': { module: () => TradeList, title: 'Trade Log' },
     '/calendar': { module: () => Calendar, title: 'Calendar' },
@@ -20,6 +21,12 @@ const App = (() => {
   function init() {
     initTheme();
     initAuth();
+    
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(err => {
+        console.warn('Service Worker registration failed:', err);
+      });
+    }
   }
 
   let authEventsBound = false;
@@ -215,6 +222,10 @@ const App = (() => {
           </a>
 
           <div class="nav-section-label">Review</div>
+          <a class="nav-item" data-route="/insights" href="#/insights">
+            <span class="nav-item-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg></span>
+            <span>Insights</span>
+          </a>
           <a class="nav-item" data-route="/calendar" href="#/calendar">
             <span class="nav-item-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
             <span>Calendar</span>

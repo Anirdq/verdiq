@@ -132,11 +132,13 @@ const Settings = (() => {
         <div class="settings-section">
           <h3 class="settings-section-title">Data Management</h3>
           <p class="settings-section-desc">Export, import, or manage your trading data. Currently storing <strong>${tradeCount}</strong> trades and <strong>${journalCount}</strong> journal entries.</p>
-          
           <div class="flex gap-3 flex-wrap mb-4">
-            <button class="btn btn-secondary" id="set-export">📦 Export Data (Now via Supabase)</button>
-            <button class="btn btn-secondary" id="set-import-json">📥 Import Data (Now via Supabase)</button>
+            <button class="btn btn-primary" id="set-import-csv">
+              <span class="btn-icon">📥</span> Import Trades (CSV)
+            </button>
+            <input type="file" id="csv-file-input" accept=".csv" class="hidden">
           </div>
+          <p class="settings-section-desc" style="margin-top: -10px;">Supports Tradovate and MetaTrader CSV exports.</p>
         </div>
 
         <!-- Danger Zone -->
@@ -256,6 +258,28 @@ const Settings = (() => {
         }
       }
     });
+
+    // CSV Import
+    const csvInput = container.querySelector('#csv-file-input');
+    const importBtn = container.querySelector('#set-import-csv');
+    if (importBtn && csvInput) {
+      importBtn.addEventListener('click', () => csvInput.click());
+      csvInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        try {
+          const count = await ImportCSV.handleImport(file);
+          toast(`Successfully imported ${count} trades!`, 'success');
+          // Update counts
+          const newTrades = await Store.getTrades();
+          container.querySelector('.settings-section-desc strong').textContent = newTrades.length;
+        } catch (err) {
+          toast(`Import failed: ${err.message}`, 'error');
+        }
+        csvInput.value = ''; // reset
+      });
+    }
   }
 
   function destroy() {}
