@@ -42,9 +42,11 @@ const ImportCSV = (() => {
             const instrument = row['symbol'] || row['item'] || row['contract'] || 'UNKNOWN';
             
             // Try to figure out PnL
-            let pnlStr = row['p&l'] || row['profit'] || row['net pnl'] || row['pnl'] || '0';
-            pnlStr = String(pnlStr).replace(/[^0-9.-]+/g, "");
-            const pnl = parseFloat(pnlStr) || 0;
+            let pnlStr = String(row['p&l'] || row['profit'] || row['net pnl'] || row['pnl'] || '0').trim();
+            const isNegative = pnlStr.includes('(') && pnlStr.includes(')') || pnlStr.includes('-');
+            pnlStr = pnlStr.replace(/[^0-9.]+/g, "");
+            let pnl = parseFloat(pnlStr) || 0;
+            if (isNegative) pnl = -pnl;
 
             // Direction
             let dir = 'Long';
