@@ -14,6 +14,8 @@ const ImportCSV = (() => {
             try {
               const rows = results.data;
               let importCount = 0;
+              const importBatchId = Utils.uuid();
+              const importBatchTime = Date.now();
 
           for (const row of rows) {
             // Generic mapping logic
@@ -91,6 +93,8 @@ const ImportCSV = (() => {
               setupName: 'Imported Trade',
               ruleFollowed: true,
               mistakeTags: [],
+              importBatchId,
+              importBatchTime,
             };
 
             await Store.addTrade(trade);

@@ -48,6 +48,8 @@ CREATE TABLE public.trades (
   emotion_after text,
   mistake_tags text[],
   review_note text,
+  import_batch_id text,
+  import_batch_time numeric,
   created_at timestamp with time zone DEFAULT timezone('utc'::text, now()),
   updated_at timestamp with time zone DEFAULT timezone('utc'::text, now())
 );

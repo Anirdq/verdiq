@@ -9,6 +9,7 @@ const TradeList = (() => {
   let sortCol = 'date';
   let sortDir = 'desc';
   let filters = {};
+  let selectedIds = new Set();
 
   async function render(container) {
     const settings = await Store.getSettings();
@@ -129,7 +130,16 @@ const TradeList = (() => {
       { key: 'actions', label: '', sortable: false },
     ];
 
-    let html = `<div class="table-container"><table class="data-table"><thead><tr>`;
+    let html = `
+      ${selectedIds.size > 0 ? `
+        <div class="bulk-action-bar flex items-center justify-between" style="background: var(--surface-2); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid var(--border);">
+          <span><strong>${selectedIds.size}</strong> trades selected</span>
+          <button class="btn btn-danger btn-sm" id="bulk-delete-btn">Delete Selected</button>
+        </div>
+      ` : ''}
+      <div class="table-container"><table class="data-table"><thead><tr>
+      <th style="width: 40px; text-align: center;"><input type="checkbox" id="select-all-checkbox" ${trades.length > 0 && selectedIds.size === trades.length ? 'checked' : ''}></th>
+    `;
     cols.forEach(col => {
       const sorted = sortCol === col.key;
       const icon = sorted ? (sortDir === 'asc' ? '▲' : '▼') : '⇅';
@@ -144,8 +154,12 @@ const TradeList = (() => {
       const rowClass = pnl > 10 ? 'row-win' : pnl < -10 ? 'row-loss' : '';
       const isExpanded = expandedId === t.id;
       const mistakeHtml = (t.mistakeTags || []).slice(0, 2).map(m => `<span class="tag tag-warning" style="font-size:0.625rem">${Utils.escapeHTML(m)}</span>`).join(' ');
+      const isSelected = selectedIds.has(t.id);
 
-      html += `<tr class="${rowClass}" data-id="${t.id}" style="cursor:pointer">
+      html += `<tr class="${rowClass} ${isSelected ? 'row-selected' : ''}" data-id="${t.id}" style="cursor:pointer">
+        <td style="text-align: center;" class="checkbox-cell" onclick="event.stopPropagation()">
+          <input type="checkbox" class="row-checkbox" data-id="${t.id}" ${isSelected ? 'checked' : ''}>
+        </td>
         <td class="cell-mono">${Utils.formatDate(t.date, 'short')}</td>
         <td>${Utils.escapeHTML(t.session || '—')}</td>
         <td><span class="tag tag-accent">${Utils.escapeHTML(t.instrument)}</span></td>
@@ -212,6 +226,45 @@ const TradeList = (() => {
         renderTable(container);
       }
     });
+
+    const selectAll = container.querySelector('#select-all-checkbox');
+    if (selectAll) {
+      selectAll.addEventListener('change', (e) => {
+        if (e.target.checked) {
+          const visibleTrades = getVisibleTrades(container);
+          visibleTrades.forEach(id => selectedIds.add(id));
+        } else {
+          selectedIds.clear();
+        }
+        render(container);
+      });
+    }
+
+    container.querySelectorAll('.row-checkbox').forEach(cb => {
+      cb.addEventListener('change', (e) => {
+        const id = e.target.dataset.id;
+        if (e.target.checked) selectedIds.add(id);
+        else selectedIds.delete(id);
+        render(container);
+      });
+    });
+
+    const bulkDeleteBtn = container.querySelector('#bulk-delete-btn');
+    if (bulkDeleteBtn) {
+      bulkDeleteBtn.addEventListener('click', async () => {
+        if (confirm(`Are you sure you want to delete ${selectedIds.size} trades? This cannot be undone.`)) {
+          const count = await Store.bulkDeleteTrades(Array.from(selectedIds));
+          selectedIds.clear();
+          render(container);
+        }
+      });
+    }
+  }
+
+  function getVisibleTrades(container) {
+    const ids = [];
+    container.querySelectorAll('.row-checkbox').forEach(cb => ids.push(cb.dataset.id));
+    return ids;
   }
 
   function renderExpanded(t) {

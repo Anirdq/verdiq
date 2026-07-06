@@ -128,6 +128,8 @@ const Store = (() => {
             emotion_after: item.data.emotionAfter,
             mistake_tags: item.data.mistakeTags,
             review_note: item.data.reviewNote,
+            import_batch_id: item.data.importBatchId,
+            import_batch_time: item.data.importBatchTime,
             user_id: session.user.id,
             updated_at: new Date().toISOString()
           };
@@ -276,6 +278,45 @@ const Store = (() => {
     emit('trades-changed', await getTrades());
   }
 
+  async function bulkDeleteTrades(ids) {
+    if (!ids || !ids.length) return 0;
+    for (const id of ids) {
+      await idbDelete('trades', id);
+      queueSync('delete', 'trades', { id });
+    }
+    emit('trades-changed', await getTrades());
+    return ids.length;
+  }
+
+  async function undoLastImport() {
+    const trades = await getTrades();
+    let latestBatchId = null;
+    let latestBatchTime = 0;
+    
+    for (const t of trades) {
+      if (t.importBatchId && t.importBatchTime) {
+        if (t.importBatchTime > latestBatchTime) {
+          latestBatchTime = t.importBatchTime;
+          latestBatchId = t.importBatchId;
+        }
+      }
+    }
+    
+    if (!latestBatchId) return 0;
+    
+    let deletedCount = 0;
+    for (const t of trades) {
+      if (t.importBatchId === latestBatchId) {
+        await idbDelete('trades', t.id);
+        queueSync('delete', 'trades', { id: t.id });
+        deletedCount++;
+      }
+    }
+    
+    emit('trades-changed', await getTrades());
+    return deletedCount;
+  }
+
   async function filterTrades({ startDate, endDate, instrument, session, direction, setup, result, ruleFollowed } = {}) {
     let trades = await getTrades();
     if (startDate) trades = trades.filter(t => t.date >= startDate);
@@ -384,7 +425,9 @@ const Store = (() => {
             emotionDuring: row.emotion_during || existing.emotionDuring,
             emotionAfter: row.emotion_after || existing.emotionAfter,
             mistakeTags: row.mistake_tags || existing.mistakeTags || [],
-            reviewNote: row.review_note || existing.reviewNote
+            reviewNote: row.review_note || existing.reviewNote,
+            importBatchId: row.import_batch_id || existing.importBatchId,
+            importBatchTime: row.import_batch_time !== null ? row.import_batch_time : existing.importBatchTime
           });
         }
         
@@ -447,7 +490,14 @@ const Store = (() => {
   return {
     on, off, emit,
     getSettings, updateSettings,
-    getTrades, getTradeById, addTrade, updateTrade, deleteTrade, filterTrades,
+    getTrades,
+    getTradeById,
+    addTrade,
+    updateTrade,
+    deleteTrade,
+    bulkDeleteTrades,
+    undoLastImport,
+    filterTrades,
     getJournalEntries, getJournalByDate, saveJournalEntry, deleteJournalEntry,
     fetchCloudData, processSyncQueue, clearAll,
     exportAll, importJSON, importCSV,

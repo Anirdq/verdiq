@@ -580,3 +580,5 @@
 .page-enter {
   animation: fadeInUp 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
+. r o w - s e l e c t e d   {   b a c k g r o u n d - c o l o r :   r g b a ( v a r ( - - c o l o r - p r i m a r y - r g b ) ,   0 . 1 )   ! i m p o r t a n t ;   }  
+ 

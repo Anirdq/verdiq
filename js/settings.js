@@ -144,6 +144,9 @@ const Settings = (() => {
             <button class="btn btn-primary" id="set-import-csv">
               <span class="btn-icon">📥</span> Import Trades (CSV)
             </button>
+            <button class="btn btn-secondary" id="set-undo-import">
+              <span class="btn-icon">↩️</span> Undo Last Import
+            </button>
             <input type="file" id="csv-file-input" accept=".csv" class="hidden">
             <button class="btn btn-secondary" id="set-export">📦 Export Data (JSON)</button>
             <button class="btn btn-secondary" id="set-import-json">📥 Import Data (JSON)</button>
@@ -288,6 +291,18 @@ const Settings = (() => {
     });
 
     // Export/Import
+    container.querySelector('#set-undo-import').addEventListener('click', async () => {
+      if (confirm('Are you sure you want to undo the last CSV import? This will delete all trades from the most recent import batch.')) {
+        const deletedCount = await Store.undoLastImport();
+        if (deletedCount > 0) {
+          alert(`Successfully undone! Removed ${deletedCount} trades.`);
+          await render(container);
+        } else {
+          alert('No recent import batch found to undo.');
+        }
+      }
+    });
+
     container.querySelector('#set-export').addEventListener('click', () => {
       Store.exportAll();
     });
