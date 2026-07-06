@@ -22,7 +22,7 @@ const ImportCSV = (() => {
             // Tradovate often has 'symbol', 'timestamp', 'price', 'p&l', etc.
             // MetaTrader has 'time', 'deal', 'symbol', 'type', 'direction', 'price', 'profit'
             
-            const dateStr = row['timestamp'] || row['time'] || row['date'] || row['close time'] || row['boughttimestamp'] || row['soldtimestamp'];
+            const dateStr = row['timestamp'] || row['time'] || row['date'] || row['close time'] || row['boughttimestamp'] || row['soldtimestamp'] || row['bought at'] || row['sold at'];
             if (!dateStr) continue; // skip invalid rows
 
             const instrument = row['symbol'] || row['item'] || row['contract'] || 'UNKNOWN';
@@ -56,9 +56,11 @@ const ImportCSV = (() => {
             if (typeStr.includes('sell') || typeStr.includes('short')) dir = 'Short';
             
             // Tradovate specific direction inference
-            if (!typeStr && row['boughttimestamp'] && row['soldtimestamp']) {
-              const bTime = new Date(row['boughttimestamp']).getTime();
-              const sTime = new Date(row['soldtimestamp']).getTime();
+            const bTimeStr = row['boughttimestamp'] || row['bought at'];
+            const sTimeStr = row['soldtimestamp'] || row['sold at'];
+            if (!typeStr && bTimeStr && sTimeStr) {
+              const bTime = new Date(bTimeStr).getTime();
+              const sTime = new Date(sTimeStr).getTime();
               if (sTime < bTime) dir = 'Short';
             }
 
