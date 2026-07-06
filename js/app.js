@@ -81,12 +81,19 @@ const App = (() => {
         }
 
         // Listen for auth changes
-        window.supabaseClient.auth.onAuthStateChange((event, session) => {
+        window.supabaseClient.auth.onAuthStateChange(async (event, session) => {
           if (event === 'SIGNED_OUT') {
             showAuth('login');
           } else if (event === 'SIGNED_IN') {
             hideAuth();
             startApp();
+          } else if (event === 'PASSWORD_RECOVERY') {
+            const newPassword = prompt('Enter your new password:');
+            if (newPassword) {
+              const { error } = await window.supabaseClient.auth.updateUser({ password: newPassword });
+              if (error) alert('Error updating password: ' + error.message);
+              else alert('Password updated successfully!');
+            }
           }
         });
       } catch (e) {
@@ -141,27 +148,51 @@ const App = (() => {
       showAuth('config');
     });
 
-    // Login
-    document.getElementById('auth-login-btn').addEventListener('click', async () => {
+    // Toggle Login / Signup Mode
+    let authMode = 'login'; // 'login' or 'signup'
+    document.getElementById('auth-toggle-mode-btn').addEventListener('click', () => {
+      authMode = authMode === 'login' ? 'signup' : 'login';
+      document.getElementById('auth-mode-title').textContent = authMode === 'login' ? 'Log In' : 'Sign Up';
+      document.getElementById('auth-submit-btn').textContent = authMode === 'login' ? 'Log In' : 'Sign Up';
+      document.getElementById('auth-toggle-text').textContent = authMode === 'login' ? "Don't have an account?" : "Already have an account?";
+      document.getElementById('auth-toggle-mode-btn').textContent = authMode === 'login' ? "Sign Up" : "Log In";
+      
+      const forgotBtn = document.getElementById('auth-forgot-btn');
+      if (forgotBtn) forgotBtn.style.display = authMode === 'login' ? 'block' : 'none';
+    });
+
+    // Submit Log In / Sign Up
+    document.getElementById('auth-submit-btn').addEventListener('click', async () => {
       const email = document.getElementById('auth-email').value.trim();
       const password = document.getElementById('auth-password').value;
       if (!email || !password) return toast('Enter email and password', 'error');
 
-      const { error } = await window.supabaseClient.auth.signInWithPassword({ email, password });
-      if (error) toast(error.message, 'error');
-      else toast('Logged in successfully', 'success');
+      if (authMode === 'login') {
+        const { error } = await window.supabaseClient.auth.signInWithPassword({ email, password });
+        if (error) toast(error.message, 'error');
+        else toast('Logged in successfully', 'success');
+      } else {
+        const { error } = await window.supabaseClient.auth.signUp({ email, password });
+        if (error) toast(error.message, 'error');
+        else toast('Signup successful! Check email or log in.', 'success');
+      }
     });
 
-    // Signup
-    document.getElementById('auth-signup-btn').addEventListener('click', async () => {
-      const email = document.getElementById('auth-email').value.trim();
-      const password = document.getElementById('auth-password').value;
-      if (!email || !password) return toast('Enter email and password', 'error');
-
-      const { error } = await window.supabaseClient.auth.signUp({ email, password });
-      if (error) toast(error.message, 'error');
-      else toast('Signup successful! Check email or log in.', 'success');
-    });
+    // Forgot Password
+    const forgotBtn = document.getElementById('auth-forgot-btn');
+    if (forgotBtn) {
+      forgotBtn.addEventListener('click', async () => {
+        const email = document.getElementById('auth-email').value.trim();
+        if (!email) return toast('Please enter your email first to reset password.', 'error');
+        
+        const { error } = await window.supabaseClient.auth.resetPasswordForEmail(email, {
+          redirectTo: window.location.origin + window.location.pathname
+        });
+        
+        if (error) toast(error.message, 'error');
+        else toast('Password reset link sent to ' + email, 'success');
+      });
+    }
   }
 
   // ---- Theme system ----

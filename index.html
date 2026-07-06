@@ -98,17 +98,24 @@
 
       <!-- Login / Signup Form -->
       <div id="auth-login-section" class="auth-section hidden">
+        <h3 id="auth-mode-title" style="margin-bottom: 1rem; text-align: center; font-size: 1.25rem;">Log In</h3>
         <div class="form-group mb-3">
           <label class="form-label">Email</label>
           <input type="email" class="form-input" id="auth-email" placeholder="you@example.com">
         </div>
         <div class="form-group mb-4">
-          <label class="form-label">Password</label>
+          <div class="flex justify-between items-center">
+            <label class="form-label" style="margin-bottom: 0;">Password</label>
+            <button class="btn btn-ghost btn-sm" id="auth-forgot-btn" style="padding: 0; font-size: 0.75rem;">Forgot password?</button>
+          </div>
           <input type="password" class="form-input" id="auth-password" placeholder="••••••••">
         </div>
         <div class="flex flex-col gap-2">
-          <button class="btn btn-primary w-full" id="auth-login-btn">Log In</button>
-          <button class="btn btn-secondary w-full" id="auth-signup-btn">Sign Up</button>
+          <button class="btn btn-primary w-full" id="auth-submit-btn">Log In</button>
+        </div>
+        <div class="text-center mt-4" style="font-size: 0.85rem; color: var(--text-secondary);">
+          <span id="auth-toggle-text">Don't have an account?</span> 
+          <button class="btn btn-ghost btn-sm" id="auth-toggle-mode-btn" style="padding: 0; margin-left: 4px; color: var(--color-primary);">Sign Up</button>
         </div>
         <div class="text-center mt-4 hidden">
           <button class="btn btn-ghost btn-sm" id="auth-reconnect-btn">Change Database</button>
@@ -149,18 +156,18 @@
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
   <!-- App Modules (order matters) -->
-  <script src="js/utils.js?v=19"></script>
-  <script src="js/store.js?v=19"></script>
-  <script src="js/csv_import.js?v=19"></script>
-  <script src="js/dashboard.js?v=19"></script>
-  <script src="js/insights.js?v=19"></script>
-  <script src="js/trade-form.js?v=19"></script>
-  <script src="js/trade-list.js?v=19"></script>
-  <script src="js/calendar.js?v=19"></script>
-  <script src="js/journal.js?v=19"></script>
-  <script src="js/settings.js?v=19"></script>
-  <script src="js/calculator.js?v=19"></script>
-  <script src="js/app.js?v=19"></script>
+  <script src="js/utils.js?v=20"></script>
+  <script src="js/store.js?v=20"></script>
+  <script src="js/csv_import.js?v=20"></script>
+  <script src="js/dashboard.js?v=20"></script>
+  <script src="js/insights.js?v=20"></script>
+  <script src="js/trade-form.js?v=20"></script>
+  <script src="js/trade-list.js?v=20"></script>
+  <script src="js/calendar.js?v=20"></script>
+  <script src="js/journal.js?v=20"></script>
+  <script src="js/settings.js?v=20"></script>
+  <script src="js/calculator.js?v=20"></script>
+  <script src="js/app.js?v=20"></script>
 
 </body>
 </html>
