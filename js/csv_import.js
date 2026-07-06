@@ -12,6 +12,7 @@ const ImportCSV = (() => {
           },
           complete: async function(results) {
             try {
+              const settings = await Store.getSettings();
               const rows = results.data;
               let importCount = 0;
               const importBatchId = Utils.uuid();
@@ -29,13 +30,20 @@ const ImportCSV = (() => {
             
             // Extract Fees/Commission early so we can subtract it if we are using Gross PnL
             let feeStr = String(row['commission'] || row['fee'] || row['fees'] || '0').replace(/[^0-9.]+/g, "");
-            const fee = parseFloat(feeStr) || 0;
+            let fee = parseFloat(feeStr) || 0;
+
+            const qty = parseFloat(row['qty'] || row['quantity'] || row['volume'] || row['paired qty']) || 1;
+
+            if (fee === 0 && settings.defaultFee) {
+              // Usually round trip commissions apply per contract, so we multiply by qty
+              fee = settings.defaultFee * qty;
+            }
 
             // Try to figure out PnL (Prioritize NET over GROSS)
             let rawPnlStr = row['net pnl'] || row['net p/l'] || row['net profit'] || null;
             let isNet = true;
             if (!rawPnlStr) {
-              rawPnlStr = row['p&l'] || row['profit'] || row['pnl'] || row['p/l'] || row['gross p/l'] || row['realized'] || '0';
+              rawPnlStr = row['p&l'] || row['profit'] || row['pnl'] || row['p/l'] || row['gross p/l'] || row['realized'] || row['realized p/l'] || '0';
               isNet = false;
             }
 
@@ -80,7 +88,6 @@ const ImportCSV = (() => {
                 exit = parseFloat(buyPrice) || 0;
               }
             }
-            const qty = parseFloat(row['qty'] || row['quantity'] || row['volume']) || 1;
             
             const trade = {
               id: Utils.uuid(),
