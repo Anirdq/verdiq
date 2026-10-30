@@ -222,6 +222,7 @@ const Store = (() => {
     accountBalance: 10000,
     defaultRisk: 1,
     defaultFee: 0,
+    geminiApiKey: '',
   };
 
   // ===== SETTINGS =====

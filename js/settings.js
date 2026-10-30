@@ -154,6 +154,21 @@ const Settings = (() => {
           <p class="settings-section-desc" style="margin-top: -10px;">Supports Tradovate and MetaTrader CSV exports.</p>
         </div>
 
+        <!-- AI Configuration -->
+        <div class="settings-section">
+          <h3 class="settings-section-title">AI Configuration</h3>
+          <p class="settings-section-desc">Provide your Gemini API Key to enable the AI Trading Assistant. This key is stored securely in your browser and is never synced to the cloud.</p>
+          <div class="form-row form-row-2 mb-3">
+            <div class="form-group" style="grid-column: span 2;">
+              <label class="form-label">Gemini API Key</label>
+              <div style="display:flex;gap:10px">
+                <input type="password" class="form-input" id="set-gemini-key" value="${settings.geminiApiKey || ''}" placeholder="AIzaSy...">
+                <button class="btn btn-secondary btn-sm" id="set-save-gemini-key">Save Key</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Danger Zone -->
         <div class="settings-section settings-danger-zone">
           <h3 class="settings-section-title">⚠️ Danger Zone</h3>
@@ -262,6 +277,19 @@ const Settings = (() => {
     };
     container.querySelector('#set-save-fee').addEventListener('click', saveFee);
     container.querySelector('#set-default-fee').addEventListener('blur', saveFee);
+
+    // Save Gemini Key
+    const saveGeminiKey = async () => {
+      const val = container.querySelector('#set-gemini-key').value.trim();
+      const s = await Store.getSettings();
+      if (s.geminiApiKey !== val) {
+        s.geminiApiKey = val;
+        await Store.updateSettings(s);
+        App.toast('Gemini API Key saved', 'success');
+      }
+    };
+    container.querySelector('#set-save-gemini-key').addEventListener('click', saveGeminiKey);
+    container.querySelector('#set-gemini-key').addEventListener('blur', saveGeminiKey);
 
     // Bulk Apply Fee
     container.querySelector('#set-bulk-apply-fee').addEventListener('click', async () => {
