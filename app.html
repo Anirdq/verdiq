@@ -8,10 +8,10 @@
   <link rel="manifest" href="/manifest.json">
   <title>Verdiq — Forex & Futures Trading Journal</title>
 
-  <!-- Error Debugger -->
+  <!-- Error logging (console only, no blocking alerts) -->
   <script>
-    window.addEventListener('error', e => alert('Error: ' + e.message + ' at line ' + e.lineno));
-    window.addEventListener('unhandledrejection', e => alert('Promise Error: ' + (e.reason && e.reason.message || e.reason)));
+    window.addEventListener('error', e => console.error('JS Error:', e.message, 'line', e.lineno, e.filename));
+    window.addEventListener('unhandledrejection', e => console.error('Promise Error:', e.reason));
   </script>
 
   <!-- Styles -->
