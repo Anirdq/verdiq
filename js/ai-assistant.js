@@ -82,8 +82,7 @@ const AIAssistant = (() => {
         return;
       }
 
-      // Prepare data for AI
-      // Limit to last 50 trades to avoid token limits
+      // Prepare data for AI — limit to last 50 trades to avoid token limits
       const recentTrades = trades.slice(0, 50).map(t => ({
         date: t.date,
         instrument: t.instrument,
@@ -96,8 +95,7 @@ const AIAssistant = (() => {
         followedPlan: t.ruleFollowed
       }));
 
-      const prompt = \`
-You are an expert trading psychologist and performance analyst. 
+      const prompt = `You are an expert trading psychologist and performance analyst. 
 Analyze the following recent trades from my trading journal. 
 Provide concise, actionable feedback.
 Focus on:
@@ -106,8 +104,7 @@ Focus on:
 3. A short, punchy 3-step action plan for my next trading session.
 
 Here is the data in JSON format:
-\${JSON.stringify(recentTrades, null, 2)}
-      \`;
+${JSON.stringify(recentTrades, null, 2)}`;
 
       isGenerating = true;
       responseContainer.classList.remove('hidden');
@@ -116,7 +113,7 @@ Here is the data in JSON format:
       analyzeBtn.disabled = true;
 
       try {
-        const response = await fetch(\`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=\${apiKey}\`, {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -135,19 +132,19 @@ Here is the data in JSON format:
         
         // Simple markdown parsing for the output
         let htmlContent = text
-          .replace(/\\*\\*(.*?)\\*\\*/g, '<strong>$1</strong>')
-          .replace(/\\*(.*?)\\*/g, '<em>$1</em>')
+          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+          .replace(/\*(.*?)\*/g, '<em>$1</em>')
           .replace(/^### (.*$)/gim, '<h3>$1</h3>')
           .replace(/^## (.*$)/gim, '<h2>$1</h2>')
           .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-          .replace(/^\\* (.*$)/gim, '<ul><li>$1</li></ul>')
-          .replace(/<\\/ul>\\n<ul>/g, '\\n')
-          .replace(/\\n/g, '<br>');
+          .replace(/^\* (.*$)/gim, '<ul><li>$1</li></ul>')
+          .replace(/<\/ul>\n<ul>/g, '\n')
+          .replace(/\n/g, '<br>');
 
         contentEl.innerHTML = htmlContent;
       } catch (err) {
         App.toast(err.message, 'error');
-        contentEl.innerHTML = \`<span class="text-loss">Error: \${err.message}</span>\`;
+        contentEl.innerHTML = `<span class="text-loss">Error: ${err.message}</span>`;
       } finally {
         isGenerating = false;
         loadingEl.classList.add('hidden');
