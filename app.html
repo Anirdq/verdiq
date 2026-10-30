@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="description" content="A professional trading journal for Forex and Futures traders. Track trades, analyze performance, and improve your trading psychology.">
+  <meta name="theme-color" content="#0d1117">
+  <link rel="manifest" href="/manifest.json">
+  <title>Verdiq — Forex & Futures Trading Journal</title>
+
+  <!-- Error Debugger -->
+  <script>
+    window.addEventListener('error', e => alert('Error: ' + e.message + ' at line ' + e.lineno));
+    window.addEventListener('unhandledrejection', e => alert('Promise Error: ' + (e.reason && e.reason.message || e.reason)));
+  </script>
+
+  <!-- Styles -->
+  <link rel="icon" type="image/png" href="/icon.png">
+  <link rel="apple-touch-icon" href="/icon.png">
+  <link rel="stylesheet" href="css/index.css?v=17">
+  <link rel="stylesheet" href="css/components.css?v=17">
+  <link rel="stylesheet" href="css/pages.css?v=17">
+</head>
+<body>
+
+  <div class="app" id="app">
+    <!-- Loading state while scripts load -->
+    <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;width:100%;flex-direction:column;gap:1rem">
+      <img src="/icon.png" alt="Verdiq" style="width: 64px; height: 64px; border-radius: 12px; margin-bottom: 8px;">
+      <div style="color:var(--text-muted);font-size:14px;font-family:var(--font-body)">Loading Verdiq...</div>
+    </div>
+
+    <!-- Mobile Top Navigation / Branding -->
+    <header class="mobile-top-bar" id="mobile-top-bar">
+      <div class="mobile-logo">
+        <img src="/icon.png" alt="Verdiq">
+        <span>Verdiq</span>
+      </div>
+      <div class="mobile-profile" onclick="document.querySelector('[data-route=\\'/settings\\']').click()">
+        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-content" id="main-content">
+      <!-- Pages render here -->
+    </main>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-nav" id="mobile-nav">
+      <a class="mobile-nav-item" data-route="/dashboard" href="#/dashboard">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <span>Home</span>
+      </a>
+      <a class="mobile-nav-item" data-route="/ai-coach" href="#/ai-coach">
+        <span style="font-size: 20px; line-height: 24px;">✨</span>
+        <span>Coach</span>
+      </a>
+      <a class="mobile-nav-item mobile-nav-primary" data-route="/new-trade" href="#/new-trade">
+        <div class="mobile-nav-fab">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </div>
+      </a>
+      <a class="mobile-nav-item" data-route="/trades" href="#/trades">
+        <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        <span>Log</span>
+      </a>
+      <a class="mobile-nav-item" data-route="/settings" href="#/settings">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <span>Setup</span>
+      </a>
+    </nav>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Authentication Overlay -->
+  <div id="auth-overlay" class="auth-overlay hidden">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="auth-logo"><img src="/icon.png" alt="Verdiq" style="width: 28px; height: 28px; vertical-align: middle; margin-right: 8px; border-radius: 6px;">Verdiq</div>
+        <p class="auth-subtitle">Login to sync your trades securely</p>
+      </div>
+      
+      <!-- Connect Form (URL / Key) -->
+      <div id="auth-config-section" class="auth-section">
+        <div class="form-group mb-3">
+          <label class="form-label">Supabase URL</label>
+          <input type="text" class="form-input" id="auth-supabase-url" placeholder="https://xxxx.supabase.co">
+        </div>
+        <div class="form-group mb-4">
+          <label class="form-label">Supabase Anon Key</label>
+          <input type="password" class="form-input" id="auth-supabase-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5c...">
+        </div>
+        <button class="btn btn-primary w-full" id="auth-connect-btn">Connect Database</button>
+      </div>
+
+      <!-- Login / Signup Form -->
+      <div id="auth-login-section" class="auth-section hidden">
+        <h3 id="auth-mode-title" style="margin-bottom: 1rem; text-align: center; font-size: 1.25rem;">Log In</h3>
+        <div class="form-group mb-3">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" id="auth-email" placeholder="you@example.com">
+        </div>
+        <div class="form-group mb-4">
+          <div class="flex justify-between items-center">
+            <label class="form-label" style="margin-bottom: 0;">Password</label>
+            <button class="btn btn-ghost btn-sm" id="auth-forgot-btn" style="padding: 0; font-size: 0.75rem;">Forgot password?</button>
+          </div>
+          <input type="password" class="form-input" id="auth-password" placeholder="••••••••">
+        </div>
+        <div class="flex flex-col gap-2">
+          <button class="btn btn-primary w-full" id="auth-submit-btn">Log In</button>
+        </div>
+        <div class="text-center mt-4" style="font-size: 0.85rem; color: var(--text-secondary);">
+          <span id="auth-toggle-text">Don't have an account?</span> 
+          <button class="btn btn-ghost btn-sm" id="auth-toggle-mode-btn" style="padding: 0; margin-left: 4px; color: var(--color-primary);">Sign Up</button>
+        </div>
+        <div class="text-center mt-4 hidden">
+          <button class="btn btn-ghost btn-sm" id="auth-reconnect-btn">Change Database</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+  <!-- App Modules (order matters) -->
+  <script src="js/utils.js?v=21"></script>
+  <script src="js/store.js?v=21"></script>
+  <script src="js/csv_import.js?v=21"></script>
+  <script src="js/dashboard.js?v=21"></script>
+  <script src="js/insights.js?v=21"></script>
+  <script src="js/ai-assistant.js?v=21"></script>
+  <script src="js/trade-form.js?v=21"></script>
+  <script src="js/trade-list.js?v=21"></script>
+  <script src="js/calendar.js?v=21"></script>
+  <script src="js/journal.js?v=21"></script>
+  <script src="js/settings.js?v=21"></script>
+  <script src="js/calculator.js?v=21"></script>
+  <script src="js/app.js?v=21"></script>
+
+</body>
+</html>
