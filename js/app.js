@@ -69,6 +69,17 @@ const App = (() => {
         return;
       }
 
+      // Check for URL hash errors from Supabase auth callback
+      if (window.location.hash.includes('error=')) {
+        const hashParams = new URLSearchParams(window.location.hash.substring(1));
+        const errorDesc = hashParams.get('error_description') || hashParams.get('error');
+        if (errorDesc) {
+          const cleanDesc = decodeURIComponent(errorDesc.replace(/\+/g, ' '));
+          setTimeout(() => toast('Auth: ' + cleanDesc, 'error'), 500);
+        }
+        history.replaceState(null, '', window.location.pathname);
+      }
+
       try {
         const { data: { session }, error } = await window.supabaseClient.auth.getSession();
 
@@ -89,12 +100,7 @@ const App = (() => {
             hideAuth();
             startApp();
           } else if (event === 'PASSWORD_RECOVERY') {
-            const newPassword = prompt('Enter your new password:');
-            if (newPassword) {
-              const { error } = await window.supabaseClient.auth.updateUser({ password: newPassword });
-              if (error) alert('Error updating password: ' + error.message);
-              else alert('Password updated successfully!');
-            }
+            showAuth('reset');
           }
         });
       } catch (e) {
@@ -117,11 +123,16 @@ const App = (() => {
 
   function showAuth(view) {
     document.getElementById('auth-overlay').classList.remove('hidden');
+    document.getElementById('auth-config-section').classList.add('hidden');
+    document.getElementById('auth-login-section').classList.add('hidden');
+    const resetSec = document.getElementById('auth-reset-section');
+    if (resetSec) resetSec.classList.add('hidden');
+
     if (view === 'config') {
       document.getElementById('auth-config-section').classList.remove('hidden');
-      document.getElementById('auth-login-section').classList.add('hidden');
+    } else if (view === 'reset' && resetSec) {
+      resetSec.classList.remove('hidden');
     } else {
-      document.getElementById('auth-config-section').classList.add('hidden');
       document.getElementById('auth-login-section').classList.remove('hidden');
     }
   }
@@ -193,6 +204,29 @@ const App = (() => {
         if (error) toast(error.message, 'error');
         else toast('Password reset link sent to ' + email, 'success');
       });
+    }
+
+    // Set new password (recovery flow)
+    const updatePwBtn = document.getElementById('auth-update-password-btn');
+    if (updatePwBtn) {
+      updatePwBtn.addEventListener('click', async () => {
+        const newPassword = document.getElementById('auth-new-password').value;
+        if (!newPassword || newPassword.length < 6) {
+          return toast('Password must be at least 6 characters.', 'error');
+        }
+        const { error } = await window.supabaseClient.auth.updateUser({ password: newPassword });
+        if (error) {
+          toast(error.message, 'error');
+        } else {
+          toast('Password updated successfully! Please log in.', 'success');
+          showAuth('login');
+        }
+      });
+    }
+
+    const cancelResetBtn = document.getElementById('auth-cancel-reset-btn');
+    if (cancelResetBtn) {
+      cancelResetBtn.addEventListener('click', () => showAuth('login'));
     }
   }
 
@@ -289,6 +323,10 @@ const App = (() => {
         </div>
 
         <div class="sidebar-footer">
+          <a class="nav-item" href="/" style="color: var(--text-secondary); text-decoration: none; margin-bottom: 4px;">
+            <span class="nav-item-icon"><svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg></span>
+            <span>Back to Website</span>
+          </a>
           <div class="theme-toggle" id="theme-toggle">
             <span class="nav-item-icon"><svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></span>
             <span class="theme-toggle-label" id="theme-label">${getTheme() === 'light' ? 'Light Mode' : 'Dark Mode'}</span>
@@ -316,8 +354,14 @@ const App = (() => {
           <img src="/icon.png" alt="Verdiq">
           <span>Verdiq</span>
         </div>
-        <div class="mobile-profile" onclick="document.querySelector('[data-route=\\'/settings\\']').click()">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <a href="/" style="color:var(--text-secondary);text-decoration:none;font-size:12px;font-weight:500;display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;border:1px solid var(--border-primary);background:var(--bg-secondary);">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+            <span>Website</span>
+          </a>
+          <div class="mobile-profile" onclick="document.querySelector('[data-route=\\'/settings\\']').click()">
           <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        </div>
         </div>
       </header>
 

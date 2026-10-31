@@ -31,6 +31,7 @@
   .dashboard-stats {
     grid-template-columns: repeat(2, 1fr);
   }
+
   .dashboard-charts {
     grid-template-columns: 1fr;
   }
@@ -94,6 +95,7 @@
   .trade-form-section {
     padding: var(--space-4);
   }
+
   .screenshot-grid {
     grid-template-columns: 1fr;
   }
@@ -332,8 +334,13 @@
   margin-top: var(--space-1);
 }
 
-.calendar-day.day-profit .calendar-day-pnl { color: var(--color-profit); }
-.calendar-day.day-loss .calendar-day-pnl { color: var(--color-loss); }
+.calendar-day.day-profit .calendar-day-pnl {
+  color: var(--color-profit);
+}
+
+.calendar-day.day-loss .calendar-day-pnl {
+  color: var(--color-loss);
+}
 
 .calendar-day.day-profit {
   background: var(--color-profit-bg);
@@ -397,9 +404,11 @@
     min-height: 70px;
     padding: var(--space-1) var(--space-2);
   }
+
   .calendar-day-pnl {
     font-size: var(--text-xs);
   }
+
   .calendar-day-trades {
     display: none;
   }
@@ -529,6 +538,7 @@
   .journal-layout {
     grid-template-columns: 1fr;
   }
+
   .journal-list {
     max-height: 250px;
   }
@@ -580,5 +590,10 @@
 .page-enter {
   animation: fadeInUp 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
-. r o w - s e l e c t e d   {   b a c k g r o u n d - c o l o r :   r g b a ( v a r ( - - c o l o r - p r i m a r y - r g b ) ,   0 . 1 )   ! i m p o r t a n t ;   }  
- 
+
+. r o w - s e l e c t e d    {
+     b a c k g r o u n d - c o l o r :    r g b a ( v a r ( - - c o l o r - p r i m a r y - r g b ) ,    0 . 1 )    ! i m p o r t a n t ;
+     
+}
+
+     
